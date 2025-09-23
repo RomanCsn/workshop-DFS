@@ -23,13 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-type Role = "OWNER" | "CUSTOMER" | "MONITOR" | "CAREGIVER"
+type Role = "OWNER" | "CUSTOMER"
 
 const roleHelp: Record<Role, string> = {
   OWNER: "You have horses or a stud.",
   CUSTOMER: "You book services.",
-  MONITOR: "You give lessons to the horses.",
-  CAREGIVER: "You take care of the horses.",
 }
 
 export function SignupForm({
@@ -159,8 +157,6 @@ export function SignupForm({
                 <SelectContent>
                   <SelectItem value="OWNER">Owner</SelectItem>
                   <SelectItem value="CUSTOMER">Customer</SelectItem>
-                  <SelectItem value="MONITOR">Monitor</SelectItem>
-                  <SelectItem value="CAREGIVER">Caregiver</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">{help}</p>
