@@ -54,15 +54,10 @@ export function DashboardSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-          
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-          <SidebarFooter>
-
-              <p> conextion </p>
-
-          </SidebarFooter>
       </SidebarContent>
     </Sidebar>
   )

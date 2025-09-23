@@ -7,7 +7,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       <DashboardSidebar />
       <main>
         <SidebarTrigger />
-        {children}
+        <div className="p-4 sm:p-10">
+          {children}
+        </div>
       </main>
     </SidebarProvider>
   )
