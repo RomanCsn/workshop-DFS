@@ -1,4 +1,4 @@
-import { PrismaClient, Role, Status, Service_type } from "../src/generated/prisma";
+const { PrismaClient, Role, Status, Service_type } = require( "../src/generated/prisma");
 
 const prisma = new PrismaClient();
 
