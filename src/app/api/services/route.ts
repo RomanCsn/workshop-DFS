@@ -8,13 +8,13 @@ import {
 import { z } from 'zod';
 
 /**
- * Helper: préprocesseur pour paramètres de query qui peuvent être
- * null | undefined | '' ou une chaîne numérique -> retourne un number valide
- * ou laisse l'entrée telle quelle pour que Zod la rejette proprement.
+ * Helper: Preprocessor for query parameters that may be
+ * null | undefined | '' or a numeric string -> returns a valid number
+ * or leaves the input as is so Zod can properly reject it.
  */
 const parseQueryNumber = (defaultValue: number) =>
   z.preprocess((val) => {
-    // URLSearchParams.get(...) renvoie string | null
+    // URLSearchParams.get(...) returns string | null
     if (val === null || val === undefined || val === '') return defaultValue;
     const parsed = parseInt(String(val), 10);
     return Number.isNaN(parsed) ? val : parsed;
