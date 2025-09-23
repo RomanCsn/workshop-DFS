@@ -15,18 +15,20 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id        Int      @id @default(autoincrement())
+  firstName     String
+  lastName   String
+  role  Role  @default(CUSTOMER)
+  email   String
+  phone   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([email])
-  @@map("user")
+  //Relations
+  ownedHorses Horse[] @relation("HorseOwner")
+  services    PerformedService[] @relation("ServiceRecipient")
+  customerLessons   Lesson[] @relation("UserLessons")
+  monitoredLessons  Lesson[] @relation("MonitorLessons")  
 }
 
 model Session {
@@ -72,4 +74,70 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+enum Role{
+  CUSTOMER
+  OWNER
+  ADMIN
+  MONITOR
+  CAREGIVER
+}
+
+model Horse {
+  id     Int     @id @default(autoincrement())
+  name    String?
+  ownerId Int     @map("owner_id")
+
+  //Relations
+  owner   User    @relation("HorseOwner", fields: [ownerId], references: [id])
+  lessons Lesson[]
+}
+
+model Lesson {
+  id      Int      @id @default(autoincrement())
+  date  DateTime
+  desc    String
+  status  Status  @default(PENDING)
+  monitorId   Int      @map("monitor_id")
+  customerId  Int      @map("customer_id")  
+  horseId     Int      @map("horse_id")
+
+  //Relations
+  monitor     User     @relation("MonitorLessons", fields: [monitorId], references: [id])
+  customer    User     @relation("UserLessons", fields: [customerId], references: [id])
+  horse       Horse    @relation(fields: [horseId], references: [id])
+  performedServices PerformedService[]
+}
+
+enum Status{
+  PENDING
+  IN_PROGRESS
+  FINISHED
+}
+
+model Billing {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  
+  //Relations
+  services PerformedService[] 
+}
+
+model PerformedService {
+  id           Int          @id @default(autoincrement())
+  serviceType  Service_type @default(LESSON)
+  billingId    Int          @map("billing_id")
+  userId       Int          @map("recipient_id")
+  serviceId    Int          @map("service_id")
+
+  //Relations
+  billing Billing @relation(fields: [billingId], references: [id])
+  user    User    @relation("ServiceRecipient", fields: [userId], references: [id])
+  lesson  Lesson  @relation(fields: [serviceId], references: [id])
+}
+
+enum Service_type{
+  CARE
+  LESSON
 }
