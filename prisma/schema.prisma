@@ -28,7 +28,11 @@ model User {
   ownedHorses Horse[] @relation("HorseOwner")
   services    PerformedService[] @relation("ServiceRecipient")
   customerLessons   Lesson[] @relation("UserLessons")
-  monitoredLessons  Lesson[] @relation("MonitorLessons")  
+  monitoredLessons  Lesson[] @relation("MonitorLessons")
+  sessions   Session[]
+  accounts   Account[]
+
+  @@map("user")
 }
 
 model Session {
@@ -39,7 +43,7 @@ model Session {
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
-  userId    String
+  userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
@@ -50,7 +54,7 @@ model Account {
   id                    String    @id
   accountId             String
   providerId            String
-  userId                String
+  userId                Int
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
@@ -100,7 +104,7 @@ model Lesson {
   desc    String
   status  Status  @default(PENDING)
   monitorId   Int      @map("monitor_id")
-  customerId  Int      @map("customer_id")  
+  customerId  Int      @map("customer_id")
   horseId     Int      @map("horse_id")
 
   //Relations
@@ -119,9 +123,9 @@ enum Status{
 model Billing {
   id       Int      @id @default(autoincrement())
   date     DateTime
-  
+
   //Relations
-  services PerformedService[] 
+  services PerformedService[]
 }
 
 model PerformedService {
