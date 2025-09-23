@@ -14,9 +14,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  owner
+  customer
+  monitor
+  caregiver
+}
+
 model User {
   id            String    @id
   name          String
+  firstName     String
+  lastName      String
+  role          Role
+  phone         String
   email         String
   emailVerified Boolean   @default(false)
   image         String?
