@@ -135,6 +135,7 @@ model PerformedService {
   billingId    String          @map("billing_id")
   userId       String          @map("recipient_id")
   serviceId    String          @map("service_id")
+  amount       Float           @default(0)
 
   //Relations
   billing Billing @relation(fields: [billingId], references: [id])
