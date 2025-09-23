@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Postgres Config
+
+We keep the database files in the `postgres/` folder. When you run `docker compose up db`, Docker mounts the files in this folder into the Postgres container. The files do the following:
+
+- `postgres/conf/` holds the base Postgres configuration copied into `/etc/postgresql/15/main/` inside the container.
+- `postgres/init_hook.sql` and `postgres/end_hook.sql` run on first start to set up the `erp` user and grant it access to the default database.
+- `postgres/pgmemento.sql` creates the `audit` schema and enables the `pgmemento` extension if it is installed in the image. If the extension is missing the script prints a notice and Postgres keeps running.
+
+This setup lets you watch every change in the database once the pgMemento extension is available.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
