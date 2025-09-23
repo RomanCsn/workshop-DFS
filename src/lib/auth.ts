@@ -8,7 +8,7 @@ import { PrismaClient } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
-const roleValidator = z.enum(["owner", "customer", "monitor", "caregiver"]);
+const roleValidator = z.enum(["OWNER", "CUSTOMER", "MONITOR", "CAREGIVER"]);
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {

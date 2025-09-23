@@ -23,13 +23,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-type Role = "owner" | "customer" | "monitor" | "caregiver"
+type Role = "OWNER" | "CUSTOMER" | "MONITOR" | "CAREGIVER"
 
 const roleHelp: Record<Role, string> = {
-  owner: "You have horses or a stud.",
-  customer: "You book services.",
-  monitor: "You give lessons to the horses.",
-  caregiver: "You take care of the horses.",
+  OWNER: "You have horses or a stud.",
+  CUSTOMER: "You book services.",
+  MONITOR: "You give lessons to the horses.",
+  CAREGIVER: "You take care of the horses.",
 }
 
 export function SignupForm({
@@ -77,7 +77,6 @@ export function SignupForm({
         setIsSubmitting(true)
 
         const response = await authClient.signUp.email({
-          name: `${firstName} ${lastName}`.trim(),
           email,
           password,
           firstName,
@@ -149,17 +148,19 @@ export function SignupForm({
               <Label htmlFor="role">Role</Label>
               <Select
                 value={role}
-                onValueChange={(v) => setRole(v as Role)}
+                onValueChange={(v) => {
+                  setRole(v as Role)
+                }}
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="role">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="owner">Owner</SelectItem>
-                  <SelectItem value="customer">Customer</SelectItem>
-                  <SelectItem value="monitor">Monitor</SelectItem>
-                  <SelectItem value="caregiver">Caregiver</SelectItem>
+                  <SelectItem value="OWNER">Owner</SelectItem>
+                  <SelectItem value="CUSTOMER">Customer</SelectItem>
+                  <SelectItem value="MONITOR">Monitor</SelectItem>
+                  <SelectItem value="CAREGIVER">Caregiver</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">{help}</p>

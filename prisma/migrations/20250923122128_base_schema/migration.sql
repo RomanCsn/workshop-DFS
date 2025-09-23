@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "public"."Role" AS ENUM ('CUSTOMER', 'OWNER', 'ADMIN', 'MONITOR', 'CAREGIVER');
+CREATE TYPE "public"."Role" AS ENUM ('OWNER', 'CUSTOMER', 'ADMIN', 'MONITOR', 'CAREGIVER');
 
 -- CreateEnum
 CREATE TYPE "public"."Status" AS ENUM ('PENDING', 'IN_PROGRESS', 'FINISHED');
@@ -9,11 +9,12 @@ CREATE TYPE "public"."Service_type" AS ENUM ('CARE', 'LESSON');
 
 -- CreateTable
 CREATE TABLE "public"."user" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "role" "public"."Role" NOT NULL DEFAULT 'CUSTOMER',
     "email" TEXT NOT NULL,
+    "emailVerified" BOOLEAN NOT NULL DEFAULT false,
     "phone" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -30,7 +31,7 @@ CREATE TABLE "public"."session" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ipAddress" TEXT,
     "userAgent" TEXT,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "session_pkey" PRIMARY KEY ("id")
 );
@@ -40,7 +41,7 @@ CREATE TABLE "public"."account" (
     "id" TEXT NOT NULL,
     "accountId" TEXT NOT NULL,
     "providerId" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "accessToken" TEXT,
     "refreshToken" TEXT,
     "idToken" TEXT,
@@ -68,29 +69,29 @@ CREATE TABLE "public"."verification" (
 
 -- CreateTable
 CREATE TABLE "public"."Horse" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT,
-    "owner_id" INTEGER NOT NULL,
+    "owner_id" TEXT NOT NULL,
 
     CONSTRAINT "Horse_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "public"."Lesson" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "desc" TEXT NOT NULL,
     "status" "public"."Status" NOT NULL DEFAULT 'PENDING',
-    "monitor_id" INTEGER NOT NULL,
-    "customer_id" INTEGER NOT NULL,
-    "horse_id" INTEGER NOT NULL,
+    "monitor_id" TEXT NOT NULL,
+    "customer_id" TEXT NOT NULL,
+    "horse_id" TEXT NOT NULL,
 
     CONSTRAINT "Lesson_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "public"."Billing" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Billing_pkey" PRIMARY KEY ("id")
@@ -98,11 +99,11 @@ CREATE TABLE "public"."Billing" (
 
 -- CreateTable
 CREATE TABLE "public"."PerformedService" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "serviceType" "public"."Service_type" NOT NULL DEFAULT 'LESSON',
-    "billing_id" INTEGER NOT NULL,
-    "recipient_id" INTEGER NOT NULL,
-    "service_id" INTEGER NOT NULL,
+    "billing_id" TEXT NOT NULL,
+    "recipient_id" TEXT NOT NULL,
+    "service_id" TEXT NOT NULL,
 
     CONSTRAINT "PerformedService_pkey" PRIMARY KEY ("id")
 );
