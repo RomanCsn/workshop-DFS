@@ -1,72 +1,8 @@
-import { PrismaClient, PerformedService, Prisma } from "@/generated/prisma";
+import { PrismaClient} from "@/generated/prisma";
 import { NextRequest, NextResponse } from 'next/server';
+import { createPerformedService, getAllPerformedServices, updatePerformedService, deletePerformedService } from '@/utils/services';
 
 const prisma = new PrismaClient();
-
-/* --------- CRUD --------- */
-
-export async function createPerformedService(
-  data: Prisma.PerformedServiceCreateInput
-): Promise<PerformedService> {
-  try {
-    return await prisma.performedService.create({ data });
-  } catch (err) {
-    console.error('createPerformedService error:', err);
-    throw new Error('Échec de la création du service.');
-  }
-}
-
-export async function getAllPerformedServices(
-  take = 100,
-  skip = 0
-): Promise<PerformedService[]> {
-  try {
-    return await prisma.performedService.findMany({
-      take,
-      skip,
-      orderBy: { id: 'desc' },
-    });
-  } catch (err) {
-    console.error('getAllPerformedServices error:', err);
-    throw new Error("Impossible de récupérer la liste des services.");
-  }
-}
-
-export async function getPerformedServiceById(
-  id: string
-): Promise<PerformedService | null> {
-  try {
-    return await prisma.performedService.findUnique({ where: { id } });
-  } catch (err) {
-    console.error('getPerformedServiceById error:', err);
-    throw new Error("Erreur lors de la récupération du service par id.");
-  }
-}
-
-export async function updatePerformedService(
-  id: string,
-  data: Prisma.PerformedServiceUpdateInput
-): Promise<PerformedService> {
-  try {
-    return await prisma.performedService.update({ where: { id }, data });
-  } catch (err) {
-    console.error('updatePerformedService error:', err);
-    throw new Error("Échec de la mise à jour du service.");
-  }
-}
-
-export async function deletePerformedService(
-  id: string
-): Promise<PerformedService> {
-  try {
-    return await prisma.performedService.delete({ where: { id } });
-  } catch (err) {
-    console.error('deletePerformedService error:', err);
-    throw new Error("Échec de la suppression du service.");
-  }
-}
-
-/* --------- HTTP METHODS --------- */
 
 // GET /api/services - Get all performed services
 export async function GET(request: NextRequest) {
