@@ -41,6 +41,16 @@ npx prisma generate
 
 The first command updates `prisma/schema.prisma` with any new tables Better Auth needs, and the second command refreshes the generated Prisma client in `src/generated/prisma`. Read more in the Better Auth docs: [better-auth.com/docs/introduction](https://www.better-auth.com/docs/introduction).
 
+## Github Organization
+
+We follow a simple workflow when we ship new features:
+
+- Create a branch for every change. Use the format `feat/<short-name>` for features and `fix/<short-name>` for bug fixes.
+- Push your branch and open a pull request against `main`. Add a short summary of the change and mention anyone who should review it.
+- Once the pull request is approved, squash-merge it into `main`. Delete the branch after merge to keep the repo tidy.
+
+This keeps our history clean and makes it easy for everyone to track what is happening.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
