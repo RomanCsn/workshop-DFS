@@ -1,32 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPerformedService, getAllPerformedServices, updatePerformedService, deletePerformedService } from '@/utils/services';
-import { z } from "zod";
+import {
+  createPerformedService,
+  getAllPerformedServices,
+  updatePerformedService,
+  deletePerformedService
+} from '@/utils/services';
+import { z } from 'zod';
 
-// Zod validation schemas
+/**
+ * Helper: préprocesseur pour paramètres de query qui peuvent être
+ * null | undefined | '' ou une chaîne numérique -> retourne un number valide
+ * ou laisse l'entrée telle quelle pour que Zod la rejette proprement.
+ */
+const parseQueryNumber = (defaultValue: number) =>
+  z.preprocess((val) => {
+    // URLSearchParams.get(...) renvoie string | null
+    if (val === null || val === undefined || val === '') return defaultValue;
+    const parsed = parseInt(String(val), 10);
+    return Number.isNaN(parsed) ? val : parsed;
+  }, z.number().int());
+
 const QueryParamsSchema = z.object({
-  take: z.string().optional().transform((val) => val ? parseInt(val) : 100).pipe(z.number().min(1).max(1000)),
-  skip: z.string().optional().transform((val) => val ? parseInt(val) : 0).pipe(z.number().min(0)),
+  take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
+    message: 'take must be between 1 and 1000'
+  }),
+  skip: parseQueryNumber(0).refine((n) => n >= 0, {
+    message: 'skip must be >= 0'
+  }),
 });
 
+// Body schemas
 const CreateServiceSchema = z.object({
-  serviceType: z.enum(["CARE", "LESSON"]).default("LESSON"),
-  billingId: z.string().uuid("billingId must be a valid UUID"),
-  userId: z.string().uuid("userId must be a valid UUID"),
-  serviceId: z.string().uuid("serviceId must be a valid UUID"),
-  amount: z.number().min(0, "Amount must be positive").default(0),
+  serviceType: z.enum(['CARE', 'LESSON']).default('LESSON'),
+  billingId: z.string().uuid('billingId must be a valid UUID'),
+  userId: z.string().uuid('userId must be a valid UUID'),
+  serviceId: z.string().uuid('serviceId must be a valid UUID'),
+  amount: z.number().min(0, 'Amount must be positive').default(0),
 });
 
 const UpdateServiceSchema = z.object({
-  id: z.uuid("id must be a valid UUID"),
-  serviceType: z.enum(["CARE", "LESSON"]).optional(),
-  billingId: z.uuid("billingId must be a valid UUID").optional(),
-  userId: z.uuid("userId must be a valid UUID").optional(),
-  serviceId: z.uuid("serviceId must be a valid UUID").optional(),
-  amount: z.number().min(0, "Amount must be positive").optional(),
+  id: z.string().uuid('id must be a valid UUID'),
+  serviceType: z.enum(['CARE', 'LESSON']).optional(),
+  billingId: z.string().uuid('billingId must be a valid UUID').optional(),
+  userId: z.string().uuid('userId must be a valid UUID').optional(),
+  serviceId: z.string().uuid('serviceId must be a valid UUID').optional(),
+  amount: z.number().min(0, 'Amount must be positive').optional(),
 });
 
 const DeleteServiceSchema = z.object({
-  id: z.uuid("id must be a valid UUID"),
+  id: z.string().uuid('id must be a valid UUID'),
 });
 
 // GET /api/services - Get all performed services
@@ -34,7 +56,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Validate query parameters with Zod
+    // safeParse reçoit string | null — notre preprocess gère null ''
     const validationResult = QueryParamsSchema.safeParse({
       take: searchParams.get('take'),
       skip: searchParams.get('skip'),
@@ -45,7 +67,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid query parameters',
-          details: validationResult.error.format()
+          details: validationResult.error.format(),
         },
         { status: 400 }
       );
@@ -56,14 +78,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: services
+      data: services,
     });
   } catch (error) {
     console.error('GET /api/services error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error'
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
@@ -75,7 +97,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate request body data with Zod
     const validationResult = CreateServiceSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -83,7 +104,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid data',
-          details: z.treeifyError(validationResult.error)
+          details: validationResult.error.format(),
         },
         { status: 400 }
       );
@@ -92,16 +113,19 @@ export async function POST(request: NextRequest) {
     const validatedData = validationResult.data;
     const service = await createPerformedService(validatedData);
 
-    return NextResponse.json({
-      success: true,
-      data: service
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: service,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('POST /api/services error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error'
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
@@ -113,7 +137,6 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate request body data with Zod
     const validationResult = UpdateServiceSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -121,7 +144,7 @@ export async function PUT(request: NextRequest) {
         {
           success: false,
           error: 'Invalid data',
-          details:  z.treeifyError(validationResult.error)
+          details: validationResult.error.format(),
         },
         { status: 400 }
       );
@@ -132,14 +155,14 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: service
+      data: service,
     });
   } catch (error) {
     console.error('PUT /api/services error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error'
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
@@ -152,7 +175,6 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    // Validate the ID parameter with Zod
     const validationResult = DeleteServiceSchema.safeParse({ id });
 
     if (!validationResult.success) {
@@ -160,7 +182,7 @@ export async function DELETE(request: NextRequest) {
         {
           success: false,
           error: 'Invalid or missing ID',
-          details:  z.treeifyError(validationResult.error)
+          details: validationResult.error.format(),
         },
         { status: 400 }
       );
@@ -172,14 +194,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: service,
-      message: 'Service deleted successfully'
+      message: 'Service deleted successfully',
     });
   } catch (error) {
     console.error('DELETE /api/services error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error'
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
