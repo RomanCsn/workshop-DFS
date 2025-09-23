@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  firstName     String
+  lastName   String
+  role  Role  @default(CUSTOMER)
+  email   String
+  emailVerified Boolean @default(false)
+  phone   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //Relations
+  ownedHorses Horse[] @relation("HorseOwner")
+  services    PerformedService[] @relation("ServiceRecipient")
+  customerLessons   Lesson[] @relation("UserLessons")
+  monitoredLessons  Lesson[] @relation("MonitorLessons")
+  sessions   Session[]
+  accounts   Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+enum Role{
+  OWNER
+  CUSTOMER
+  ADMIN
+  MONITOR
+  CAREGIVER
+}
+
+model Horse {
+  id      String     @id @default(uuid())
+  name    String?
+  ownerId String     @map("owner_id")
+
+  //Relations
+  owner   User    @relation("HorseOwner", fields: [ownerId], references: [id])
+  lessons Lesson[]
+}
+
+model Lesson {
+  id      String      @id @default(uuid())
+  date  DateTime
+  desc    String
+  status  Status  @default(PENDING)
+  monitorId   String      @map("monitor_id")
+  customerId  String      @map("customer_id")
+  horseId     String      @map("horse_id")
+
+  //Relations
+  monitor     User     @relation("MonitorLessons", fields: [monitorId], references: [id])
+  customer    User     @relation("UserLessons", fields: [customerId], references: [id])
+  horse       Horse    @relation(fields: [horseId], references: [id])
+  performedServices PerformedService[]
+}
+
+enum Status{
+  PENDING
+  IN_PROGRESS
+  FINISHED
+}
+
+model Billing {
+  id       String      @id @default(uuid())
+  date     DateTime
+
+  //Relations
+  services PerformedService[]
+}
+
+model PerformedService {
+  id           String          @id @default(uuid())
+  serviceType  Service_type @default(LESSON)
+  billingId    String          @map("billing_id")
+  userId       String          @map("recipient_id")
+  serviceId    String          @map("service_id")
+  amount       Float           @default(0)
+
+  //Relations
+  billing Billing @relation(fields: [billingId], references: [id])
+  user    User    @relation("ServiceRecipient", fields: [userId], references: [id])
+  lesson  Lesson  @relation(fields: [serviceId], references: [id])
+}
+
+enum Service_type{
+  CARE
+  LESSON
+}

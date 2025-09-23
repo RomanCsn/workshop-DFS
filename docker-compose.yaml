@@ -1,0 +1,18 @@
+services:
+  db:
+      container_name: erp-db
+      image: postgres:17
+      environment:
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ports:
+        - "${POSTGRES_PORT}:5432"
+      volumes:
+        - ./postgres/init_hook.sql:/docker-entrypoint-initdb.d/init_hook.sql
+        - ./postgres/end_hook.sql:/docker-entrypoint-initdb.d/end_hook.sql
+        - ./postgres/pgmemento.sql:/docker-entrypoint-initdb.d/pgmemento.sql
+        - ./postgres/conf:/etc/postgresql/15/main/
+      restart: on-failure:3
+      env_file:
+        - .env
