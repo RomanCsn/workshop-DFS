@@ -30,6 +30,17 @@ We keep the database files in the `postgres/` folder. When you run `docker compo
 
 This setup lets you watch every change in the database once the pgMemento extension is available.
 
+## Better Auth
+
+Authentication lives in `src/lib/auth.ts`. The file creates a Better Auth instance that uses Prisma and the Postgres database. When you change the config, run:
+
+```bash
+npx @better-auth/cli generate --config ./src/lib/auth.ts --yes
+npx prisma generate
+```
+
+The first command updates `prisma/schema.prisma` with any new tables Better Auth needs, and the second command refreshes the generated Prisma client in `src/generated/prisma`. Read more in the Better Auth docs: [better-auth.com/docs/introduction](https://www.better-auth.com/docs/introduction).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
