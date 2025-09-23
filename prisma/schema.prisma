@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -9,48 +15,38 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
   firstName     String
-  lastName      String
-  phone         String
+  lastName   String
   role  Role  @default(CUSTOMER)
-  accounts      Account[]
-  sessions      Session[]
-  
-  // Relations
+  email   String
+  phone   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //Relations
   ownedHorses Horse[] @relation("HorseOwner")
   services    PerformedService[] @relation("ServiceRecipient")
   customerLessons   Lesson[] @relation("UserLessons")
-  monitoredLessons  Lesson[] @relation("MonitorLessons")  
+  monitoredLessons  Lesson[] @relation("MonitorLessons")
+  sessions   Session[]
+  accounts   Account[]
 
   @@map("user")
-}
-
-enum Role{
-  CUSTOMER
-  OWNER
-  ADMIN
-  MONITOR
-  CAREGIVER
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String   @unique
+  token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
-  userId    String
+  userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([token])
   @@map("session")
 }
 
@@ -58,7 +54,8 @@ model Account {
   id                    String    @id
   accountId             String
   providerId            String
-  userId                String
+  userId                Int
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -68,7 +65,6 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
@@ -84,12 +80,20 @@ model Verification {
   @@map("verification")
 }
 
+enum Role{
+  CUSTOMER
+  OWNER
+  ADMIN
+  MONITOR
+  CAREGIVER
+}
+
 model Horse {
   id     Int     @id @default(autoincrement())
   name    String?
   ownerId Int     @map("owner_id")
 
-  // Relations
+  //Relations
   owner   User    @relation("HorseOwner", fields: [ownerId], references: [id])
   lessons Lesson[]
 }
@@ -100,10 +104,10 @@ model Lesson {
   desc    String
   status  Status  @default(PENDING)
   monitorId   Int      @map("monitor_id")
-  customerId  Int      @map("customer_id")  
+  customerId  Int      @map("customer_id")
   horseId     Int      @map("horse_id")
 
-  // Relations
+  //Relations
   monitor     User     @relation("MonitorLessons", fields: [monitorId], references: [id])
   customer    User     @relation("UserLessons", fields: [customerId], references: [id])
   horse       Horse    @relation(fields: [horseId], references: [id])
@@ -119,9 +123,9 @@ enum Status{
 model Billing {
   id       Int      @id @default(autoincrement())
   date     DateTime
-  
-  // Relations
-  services PerformedService[] 
+
+  //Relations
+  services PerformedService[]
 }
 
 model PerformedService {
@@ -131,7 +135,7 @@ model PerformedService {
   userId       Int          @map("recipient_id")
   serviceId    Int          @map("service_id")
 
-  // Relations
+  //Relations
   billing Billing @relation(fields: [billingId], references: [id])
   user    User    @relation("ServiceRecipient", fields: [userId], references: [id])
   lesson  Lesson  @relation(fields: [serviceId], references: [id])
