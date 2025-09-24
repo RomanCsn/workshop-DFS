@@ -4,6 +4,7 @@
 
 L'API Lessons permet de gérer les leçons d'équitation dans l'application. Elle offre des opérations CRUD complètes pour créer, lire, mettre à jour et supprimer des leçons, avec des fonctionnalités avancées de filtrage et de recherche.
 
+
 **Base URL :** `/api/lessons`
 
 ## Modèle de données
@@ -169,7 +170,17 @@ Met à jour uniquement le statut d'une leçon.
 ```
 
 ### 5. DELETE /api/lessons
-Supprime une leçon.
+    "date": "2025-09-23T11:00:00.000Z",
+    "desc": "Séance confirmée",
+    "status": "IN_PROGRESS",
+    "monitorId": "550e8400-e29b-41d4-a716-446655440004",
+    "customerId": "550e8400-e29b-41d4-a716-446655440005",
+    "horseId": "550e8400-e29b-41d4-a716-446655440006"
+  }
+}
+```
+
+### 4. DELETE /api/lessons
 
 #### Paramètres de requête
 - `id` (string) : UUID de la leçon à supprimer (requis)
@@ -412,3 +423,12 @@ pm.test("Each lesson has required fields", function () {
 6. **Statuts :** Les statuts valides sont : PENDING, IN_PROGRESS, FINISHED
 7. **Relations :** Les leçons sont liées aux modèles User (monitor et customer) et Horse
 8. **Tri :** Les résultats peuvent être triés selon différents critères
+=======
+## Tests rapides avec Postman
+
+- **GET** `{{base_url}}/api/lessons`
+- **POST** `{{base_url}}/api/lessons`
+- **PUT** `{{base_url}}/api/lessons`
+- **DELETE** `{{base_url}}/api/lessons?id={{lesson_id}}`
+
+> Note: Tous les IDs doivent être des UUID v4 valides. La validation d'entrée est faite avec Zod, la persistance avec Prisma.

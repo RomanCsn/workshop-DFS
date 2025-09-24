@@ -21,6 +21,7 @@ import { z } from 'zod';
 const parseQueryNumber = (defaultValue: number) =>
   z.preprocess((val) => {
     // URLSearchParams.get(...) returns string | null
+
     if (val === null || val === undefined || val === '') return defaultValue;
     const parsed = parseInt(String(val), 10);
     return Number.isNaN(parsed) ? val : parsed;
@@ -107,6 +108,7 @@ const DeleteLessonSchema = z.object({
 });
 
 // GET /api/lessons - Get lessons with various filters
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -191,6 +193,10 @@ export async function GET(request: NextRequest) {
       success: true,
       data: lessons,
     });
+    const { take, skip } = validationResult.data;
+    const lessons = await getAllLessons(take, skip);
+
+    return NextResponse.json({ success: true, data: lessons });
   } catch (error) {
     console.error('GET /api/lessons error:', error);
     return NextResponse.json(
@@ -242,6 +248,19 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
+
+    const data = validation.data;
+
+    const lesson = await createLesson({
+      date: new Date(data.date),
+      desc: data.desc,
+      status: data.status,
+      monitor: { connect: { id: data.monitorId } },
+      customer: { connect: { id: data.customerId } },
+      horse: { connect: { id: data.horseId } },
+    });
+
+    return NextResponse.json({ success: true, data: lesson }, { status: 201 });
   } catch (error) {
     console.error('POST /api/lessons error:', error);
     return NextResponse.json(
@@ -262,6 +281,7 @@ export async function PUT(request: NextRequest) {
     const validationResult = UpdateLessonSchema.safeParse(body);
 
     if (!validationResult.success) {
+
       return NextResponse.json(
         {
           success: false,
@@ -381,3 +401,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
