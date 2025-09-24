@@ -32,6 +32,12 @@ const parseQueryDate = z.preprocess((val) => {
   return isNaN(date.getTime()) ? val : date;
 }, z.date().optional());
 
+const parseOptionalUuid = (message: string) =>
+  z.preprocess((val) => {
+    if (val === null || val === undefined || val === '') return undefined;
+    return val;
+  }, z.string().uuid(message).optional());
+
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
     message: 'take must be between 1 and 1000'
@@ -45,7 +51,7 @@ const QueryParamsSchema = z.object({
   }, z.boolean().default(false)),
   startDate: parseQueryDate,
   endDate: parseQueryDate,
-  id: z.string().uuid('id must be a valid UUID').optional(),
+  id: parseOptionalUuid('id must be a valid UUID'),
 });
 
 // Body schemas
