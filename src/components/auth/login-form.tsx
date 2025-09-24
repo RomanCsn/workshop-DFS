@@ -1,59 +1,63 @@
-'use client'
+"use client";
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
+import * as React from "react";
+import { useRouter } from "next/navigation";
 
-import { cn } from "@/lib/utils"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter()
-  const [error, setError] = React.useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const router = useRouter();
+  const [error, setError] = React.useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
+    event.preventDefault();
+    setError(null);
 
-    const form = new FormData(event.currentTarget)
-    const email = (form.get("email") || "").toString().trim().toLowerCase()
-    const password = (form.get("password") || "").toString()
+    const form = new FormData(event.currentTarget);
+    const email = (form.get("email") || "").toString().trim().toLowerCase();
+    const password = (form.get("password") || "").toString();
 
     async function signIn() {
       try {
-        setIsSubmitting(true)
+        setIsSubmitting(true);
         const response = await authClient.signIn.email({
           email,
           password,
-        })
+        });
 
         if (response.error) {
-          setError(response.error.message ?? "Invalid email or password.")
-          return
+          setError(response.error.message ?? "Invalid email or password.");
+          return;
         }
 
-        router.push("/dashboard")
+        router.push("/dashboard");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to sign in. Please try again.")
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to sign in. Please try again.",
+        );
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
     }
 
-    void signIn()
+    void signIn();
   }
 
   return (
@@ -105,7 +109,11 @@ export function LoginForm({
                 </p>
               ) : null}
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Signing in..." : "Login"}
                 </Button>
               </div>
@@ -120,5 +128,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

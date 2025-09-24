@@ -17,4 +17,3 @@ npx prisma generate
 - La seconde régénère le client Prisma.
 
 Documentation: `https://better-auth.com/docs/introduction`.
-

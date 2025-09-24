@@ -7,11 +7,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-export function DashboardSidebar({
-  links,
-}) {
+export function DashboardSidebar({ links }) {
   return (
     <Sidebar>
       <SidebarContent>
@@ -34,5 +32,5 @@ export function DashboardSidebar({
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

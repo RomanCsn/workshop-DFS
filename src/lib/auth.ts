@@ -11,21 +11,21 @@ const prisma = new PrismaClient();
 const roleValidator = z.enum(["OWNER", "CUSTOMER", "MONITOR", "CAREGIVER"]);
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "postgresql",
-    }),
-    emailAndPassword: { enabled: true },
-    user: {
-        additionalFields: {
-            firstName: createFieldAttribute("string"),
-            lastName: createFieldAttribute("string"),
-            phone: createFieldAttribute("string"),
-            role: createFieldAttribute("string", {
-                validator: {
-                    input: roleValidator,
-                },
-            }),
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  emailAndPassword: { enabled: true },
+  user: {
+    additionalFields: {
+      firstName: createFieldAttribute("string"),
+      lastName: createFieldAttribute("string"),
+      phone: createFieldAttribute("string"),
+      role: createFieldAttribute("string", {
+        validator: {
+          input: roleValidator,
         },
+      }),
     },
-    plugins: [nextCookies()],
+  },
+  plugins: [nextCookies()],
 });

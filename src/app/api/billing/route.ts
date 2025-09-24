@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   createBilling,
   getAllBillings,
@@ -6,9 +6,9 @@ import {
   deleteBilling,
   getBillingById,
   getBillingWithServices,
-  getBillingsByDateRange
-} from '@/utils/billing';
-import { z } from 'zod';
+  getBillingsByDateRange,
+} from "@/utils/billing";
+import { z } from "zod";
 
 /**
  * Helper: Preprocessor for query parameters that may be
@@ -18,7 +18,7 @@ import { z } from 'zod';
 const parseQueryNumber = (defaultValue: number) =>
   z.preprocess((val) => {
     // URLSearchParams.get(...) returns string | null
-    if (val === null || val === undefined || val === '') return defaultValue;
+    if (val === null || val === undefined || val === "") return defaultValue;
     const parsed = parseInt(String(val), 10);
     return Number.isNaN(parsed) ? val : parsed;
   }, z.number().int());
@@ -27,57 +27,59 @@ const parseQueryNumber = (defaultValue: number) =>
  * Helper: Preprocessor for date parameters
  */
 const parseQueryDate = z.preprocess((val) => {
-  if (val === null || val === undefined || val === '') return undefined;
+  if (val === null || val === undefined || val === "") return undefined;
   const date = new Date(String(val));
   return isNaN(date.getTime()) ? val : date;
 }, z.date().optional());
 
 const parseOptionalUuid = (message: string) =>
   z.preprocess((val) => {
-    if (val === null || val === undefined || val === '') return undefined;
+    if (val === null || val === undefined || val === "") return undefined;
     return val;
   }, z.string().uuid(message).optional());
 
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
-    message: 'take must be between 1 and 1000'
+    message: "take must be between 1 and 1000",
   }),
   skip: parseQueryNumber(0).refine((n) => n >= 0, {
-    message: 'skip must be >= 0'
+    message: "skip must be >= 0",
   }),
   includeServices: z.preprocess((val) => {
-    if (val === null || val === undefined || val === '') return false;
-    return String(val).toLowerCase() === 'true';
+    if (val === null || val === undefined || val === "") return false;
+    return String(val).toLowerCase() === "true";
   }, z.boolean().default(false)),
   startDate: parseQueryDate,
   endDate: parseQueryDate,
-  id: parseOptionalUuid('id must be a valid UUID'),
+  id: parseOptionalUuid("id must be a valid UUID"),
 });
 
 // Body schemas
 const CreateBillingSchema = z.object({
   date: z.preprocess((val) => {
-    if (typeof val === 'string') {
+    if (typeof val === "string") {
       const date = new Date(val);
       return isNaN(date.getTime()) ? val : date;
     }
     return val;
-  }, z.date('date must be a valid date')),
+  }, z.date("date must be a valid date")),
 });
 
 const UpdateBillingSchema = z.object({
-  id: z.string().uuid('id must be a valid UUID'),
-  date: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      const date = new Date(val);
-      return isNaN(date.getTime()) ? val : date;
-    }
-    return val;
-  }, z.date('date must be a valid date')).optional(),
+  id: z.string().uuid("id must be a valid UUID"),
+  date: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        const date = new Date(val);
+        return isNaN(date.getTime()) ? val : date;
+      }
+      return val;
+    }, z.date("date must be a valid date"))
+    .optional(),
 });
 
 const DeleteBillingSchema = z.object({
-  id: z.string().uuid('id must be a valid UUID'),
+  id: z.string().uuid("id must be a valid UUID"),
 });
 
 // GET /api/billing - Get billings with various filters
@@ -86,42 +88,43 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const validationResult = QueryParamsSchema.safeParse({
-      take: searchParams.get('take'),
-      skip: searchParams.get('skip'),
-      includeServices: searchParams.get('includeServices'),
-      startDate: searchParams.get('startDate'),
-      endDate: searchParams.get('endDate'),
-      id: searchParams.get('id'),
+      take: searchParams.get("take"),
+      skip: searchParams.get("skip"),
+      includeServices: searchParams.get("includeServices"),
+      startDate: searchParams.get("startDate"),
+      endDate: searchParams.get("endDate"),
+      id: searchParams.get("id"),
     });
 
     if (!validationResult.success) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid query parameters',
+          error: "Invalid query parameters",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { take, skip, includeServices, startDate, endDate, id } = validationResult.data;
+    const { take, skip, includeServices, startDate, endDate, id } =
+      validationResult.data;
 
     let billings;
 
     // If specific ID is requested
     if (id) {
-      const billing = includeServices 
+      const billing = includeServices
         ? await getBillingWithServices(id)
         : await getBillingById(id);
-      
+
       if (!billing) {
         return NextResponse.json(
           {
             success: false,
-            error: 'Billing not found',
+            error: "Billing not found",
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -137,9 +140,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: 'startDate must be before endDate',
+            error: "startDate must be before endDate",
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       billings = await getBillingsByDateRange(startDate, endDate, take, skip);
@@ -153,13 +156,13 @@ export async function GET(request: NextRequest) {
       data: billings,
     });
   } catch (error) {
-    console.error('GET /api/billing error:', error);
+    console.error("GET /api/billing error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -175,10 +178,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid data',
+          error: "Invalid data",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -190,16 +193,16 @@ export async function POST(request: NextRequest) {
         success: true,
         data: billing,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('POST /api/billing error:', error);
+    console.error("POST /api/billing error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -215,10 +218,10 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid data',
+          error: "Invalid data",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -230,13 +233,13 @@ export async function PUT(request: NextRequest) {
       data: billing,
     });
   } catch (error) {
-    console.error('PUT /api/billing error:', error);
+    console.error("PUT /api/billing error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -245,7 +248,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const id = searchParams.get("id");
 
     const validationResult = DeleteBillingSchema.safeParse({ id });
 
@@ -253,10 +256,10 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or missing ID',
+          error: "Invalid or missing ID",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -266,16 +269,16 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: billing,
-      message: 'Billing deleted successfully',
+      message: "Billing deleted successfully",
     });
   } catch (error) {
-    console.error('DELETE /api/billing error:', error);
+    console.error("DELETE /api/billing error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   createPerformedService,
   getAllPerformedServices,
   updatePerformedService,
-  deletePerformedService
-} from '@/utils/services';
-import { z } from 'zod';
+  deletePerformedService,
+} from "@/utils/services";
+import { z } from "zod";
 
 /**
  * Helper: Preprocessor for query parameters that may be
@@ -15,40 +15,40 @@ import { z } from 'zod';
 const parseQueryNumber = (defaultValue: number) =>
   z.preprocess((val) => {
     // URLSearchParams.get(...) returns string | null
-    if (val === null || val === undefined || val === '') return defaultValue;
+    if (val === null || val === undefined || val === "") return defaultValue;
     const parsed = parseInt(String(val), 10);
     return Number.isNaN(parsed) ? val : parsed;
   }, z.number().int());
 
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
-    message: 'take must be between 1 and 1000'
+    message: "take must be between 1 and 1000",
   }),
   skip: parseQueryNumber(0).refine((n) => n >= 0, {
-    message: 'skip must be >= 0'
+    message: "skip must be >= 0",
   }),
 });
 
 // Body schemas
 const CreateServiceSchema = z.object({
-  serviceType: z.enum(['CARE', 'LESSON']).default('LESSON'),
-  billingId: z.string().uuid('billingId must be a valid UUID'),
-  userId: z.string().uuid('userId must be a valid UUID'),
-  serviceId: z.string().uuid('serviceId must be a valid UUID'),
-  amount: z.number().min(0, 'Amount must be positive').default(0),
+  serviceType: z.enum(["CARE", "LESSON"]).default("LESSON"),
+  billingId: z.string().uuid("billingId must be a valid UUID"),
+  userId: z.string().uuid("userId must be a valid UUID"),
+  serviceId: z.string().uuid("serviceId must be a valid UUID"),
+  amount: z.number().min(0, "Amount must be positive").default(0),
 });
 
 const UpdateServiceSchema = z.object({
-  id: z.string().uuid('id must be a valid UUID'),
-  serviceType: z.enum(['CARE', 'LESSON']).optional(),
-  billingId: z.string().uuid('billingId must be a valid UUID').optional(),
-  userId: z.string().uuid('userId must be a valid UUID').optional(),
-  serviceId: z.string().uuid('serviceId must be a valid UUID').optional(),
-  amount: z.number().min(0, 'Amount must be positive').optional(),
+  id: z.string().uuid("id must be a valid UUID"),
+  serviceType: z.enum(["CARE", "LESSON"]).optional(),
+  billingId: z.string().uuid("billingId must be a valid UUID").optional(),
+  userId: z.string().uuid("userId must be a valid UUID").optional(),
+  serviceId: z.string().uuid("serviceId must be a valid UUID").optional(),
+  amount: z.number().min(0, "Amount must be positive").optional(),
 });
 
 const DeleteServiceSchema = z.object({
-  id: z.string().uuid('id must be a valid UUID'),
+  id: z.string().uuid("id must be a valid UUID"),
 });
 
 // GET /api/services - Get all performed services
@@ -58,18 +58,18 @@ export async function GET(request: NextRequest) {
 
     // safeParse reçoit string | null — notre preprocess gère null ''
     const validationResult = QueryParamsSchema.safeParse({
-      take: searchParams.get('take'),
-      skip: searchParams.get('skip'),
+      take: searchParams.get("take"),
+      skip: searchParams.get("skip"),
     });
 
     if (!validationResult.success) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid query parameters',
+          error: "Invalid query parameters",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,13 +81,13 @@ export async function GET(request: NextRequest) {
       data: services,
     });
   } catch (error) {
-    console.error('GET /api/services error:', error);
+    console.error("GET /api/services error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -103,10 +103,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid data',
+          error: "Invalid data",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -118,16 +118,16 @@ export async function POST(request: NextRequest) {
         success: true,
         data: service,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('POST /api/services error:', error);
+    console.error("POST /api/services error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,10 +143,10 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid data',
+          error: "Invalid data",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -158,13 +158,13 @@ export async function PUT(request: NextRequest) {
       data: service,
     });
   } catch (error) {
-    console.error('PUT /api/services error:', error);
+    console.error("PUT /api/services error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -173,7 +173,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const id = searchParams.get("id");
 
     const validationResult = DeleteServiceSchema.safeParse({ id });
 
@@ -181,10 +181,10 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or missing ID',
+          error: "Invalid or missing ID",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -194,16 +194,16 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: service,
-      message: 'Service deleted successfully',
+      message: "Service deleted successfully",
     });
   } catch (error) {
-    console.error('DELETE /api/services error:', error);
+    console.error("DELETE /api/services error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

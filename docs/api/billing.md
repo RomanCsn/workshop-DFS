@@ -22,21 +22,23 @@ L'API Billing permet de gérer les factures dans l'application. Elle offre des o
 
 ```typescript
 {
-  id: string;           // UUID généré automatiquement
-  serviceType: "CARE" | "LESSON";  // Type de service
-  billingId: string;    // UUID - Référence vers cette facture
-  userId: string;       // UUID - ID de l'utilisateur bénéficiaire
-  serviceId: string;    // UUID - ID du service/leçon
-  amount: number;       // Montant du service
+  id: string; // UUID généré automatiquement
+  serviceType: "CARE" | "LESSON"; // Type de service
+  billingId: string; // UUID - Référence vers cette facture
+  userId: string; // UUID - ID de l'utilisateur bénéficiaire
+  serviceId: string; // UUID - ID du service/leçon
+  amount: number; // Montant du service
 }
 ```
 
 ## Routes disponibles
 
 ### 1. GET /api/billing
+
 Récupère la liste des factures avec filtrage et pagination.
 
 #### Paramètres de requête (optionnels)
+
 - `take` (number) : Nombre d'éléments à récupérer (min: 1, max: 1000, défaut: 100)
 - `skip` (number) : Nombre d'éléments à ignorer (min: 0, défaut: 0)
 - `id` (string) : UUID d'une facture spécifique
@@ -47,6 +49,7 @@ Récupère la liste des factures avec filtrage et pagination.
 #### Réponse de succès (200)
 
 **Sans services inclus :**
+
 ```json
 {
   "success": true,
@@ -60,6 +63,7 @@ Récupère la liste des factures avec filtrage et pagination.
 ```
 
 **Avec services inclus :**
+
 ```json
 {
   "success": true,
@@ -85,36 +89,43 @@ Récupère la liste des factures avec filtrage et pagination.
 #### Exemples d'utilisation
 
 **Récupérer toutes les factures :**
+
 ```
 GET /api/billing
 ```
 
 **Récupérer une facture spécifique avec services :**
+
 ```
 GET /api/billing?id=550e8400-e29b-41d4-a716-446655440000&includeServices=true
 ```
 
 **Filtrer par plage de dates :**
+
 ```
 GET /api/billing?startDate=2024-12-01T00:00:00Z&endDate=2024-12-31T23:59:59Z
 ```
 
 **Avec pagination :**
+
 ```
 GET /api/billing?take=10&skip=20
 ```
 
 ### 2. POST /api/billing
+
 Crée une nouvelle facture.
 
 #### Corps de la requête
+
 ```json
 {
-  "date": "2024-12-20T00:00:00.000Z"  // Requis
+  "date": "2024-12-20T00:00:00.000Z" // Requis
 }
 ```
 
 #### Réponse de succès (201)
+
 ```json
 {
   "success": true,
@@ -126,17 +137,20 @@ Crée une nouvelle facture.
 ```
 
 ### 3. PUT /api/billing
+
 Met à jour une facture existante.
 
 #### Corps de la requête
+
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",  // Requis
-  "date": "2024-12-21T00:00:00.000Z"             // Optionnel
+  "id": "550e8400-e29b-41d4-a716-446655440000", // Requis
+  "date": "2024-12-21T00:00:00.000Z" // Optionnel
 }
 ```
 
 #### Réponse de succès (200)
+
 ```json
 {
   "success": true,
@@ -148,17 +162,21 @@ Met à jour une facture existante.
 ```
 
 ### 4. DELETE /api/billing
+
 Supprime une facture.
 
 #### Paramètres de requête
+
 - `id` (string) : UUID de la facture à supprimer (requis)
 
 #### Exemple d'URL
+
 ```
 DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ```
 
 #### Réponse de succès (200)
+
 ```json
 {
   "success": true,
@@ -173,6 +191,7 @@ DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ## Gestion des erreurs
 
 ### Erreurs de validation (400)
+
 ```json
 {
   "success": false,
@@ -186,6 +205,7 @@ DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ```
 
 ### Date de début après date de fin (400)
+
 ```json
 {
   "success": false,
@@ -194,6 +214,7 @@ DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ```
 
 ### Facture non trouvée (404)
+
 ```json
 {
   "success": false,
@@ -202,6 +223,7 @@ DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ```
 
 ### Erreurs serveur (500)
+
 ```json
 {
   "success": false,
@@ -212,32 +234,38 @@ DELETE /api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ## Tests avec Postman
 
 ### Configuration de l'environnement
+
 1. Créez un environnement Postman
 2. Ajoutez la variable `base_url` avec la valeur : `http://localhost:3000`
 
 ### Collection de tests
 
 #### 1. Récupérer toutes les factures
+
 ```
 GET {{base_url}}/api/billing
 ```
 
 #### 2. Récupérer une facture avec services
+
 ```
 GET {{base_url}}/api/billing?id=550e8400-e29b-41d4-a716-446655440000&includeServices=true
 ```
 
 #### 3. Filtrer par plage de dates
+
 ```
 GET {{base_url}}/api/billing?startDate=2024-12-01T00:00:00Z&endDate=2024-12-31T23:59:59Z
 ```
 
 #### 4. Pagination
+
 ```
 GET {{base_url}}/api/billing?take=5&skip=0
 ```
 
 #### 5. Créer une nouvelle facture
+
 ```
 POST {{base_url}}/api/billing
 Content-Type: application/json
@@ -248,6 +276,7 @@ Content-Type: application/json
 ```
 
 #### 6. Mettre à jour une facture
+
 ```
 PUT {{base_url}}/api/billing
 Content-Type: application/json
@@ -259,6 +288,7 @@ Content-Type: application/json
 ```
 
 #### 7. Supprimer une facture
+
 ```
 DELETE {{base_url}}/api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ```
@@ -266,20 +296,25 @@ DELETE {{base_url}}/api/billing?id=550e8400-e29b-41d4-a716-446655440000
 ### Scénarios de test
 
 #### Test de validation
+
 1. **Date invalide :**
+
    ```json
    {
      "date": "invalid-date-format"
    }
    ```
+
    **Résultat attendu :** 400 avec message "date must be a valid date"
 
 2. **ID manquant pour UPDATE :**
+
    ```json
    {
      "date": "2024-12-20T00:00:00.000Z"
    }
    ```
+
    **Résultat attendu :** 400 avec message d'erreur de validation
 
 3. **UUID invalide :**
@@ -292,102 +327,112 @@ DELETE {{base_url}}/api/billing?id=550e8400-e29b-41d4-a716-446655440000
    **Résultat attendu :** 400 avec message "id must be a valid UUID"
 
 #### Test de plage de dates invalide
+
 ```
 GET {{base_url}}/api/billing?startDate=2024-12-31T00:00:00Z&endDate=2024-12-01T00:00:00Z
 ```
+
 **Résultat attendu :** 400 avec message "startDate must be before endDate"
 
 #### Test de pagination invalide
+
 ```
 GET {{base_url}}/api/billing?take=0
 GET {{base_url}}/api/billing?take=1001
 GET {{base_url}}/api/billing?skip=-1
 ```
+
 **Résultat attendu :** 400 avec messages d'erreur appropriés
 
 #### Test avec facture inexistante
+
 ```
 GET {{base_url}}/api/billing?id=00000000-0000-0000-0000-000000000000
 ```
+
 **Résultat attendu :** 404 avec message "Billing not found"
 
 ### Scripts de test Postman
 
 #### Script de validation de réponse POST
+
 ```javascript
 pm.test("Status code is 201", function () {
-    pm.response.to.have.status(201);
+  pm.response.to.have.status(201);
 });
 
 pm.test("Response has success and data", function () {
-    var jsonData = pm.response.json();
-    pm.expect(jsonData.success).to.be.true;
-    pm.expect(jsonData.data).to.have.property('id');
-    pm.expect(jsonData.data).to.have.property('date');
+  var jsonData = pm.response.json();
+  pm.expect(jsonData.success).to.be.true;
+  pm.expect(jsonData.data).to.have.property("id");
+  pm.expect(jsonData.data).to.have.property("date");
 });
 
 pm.test("Date format is correct", function () {
-    var jsonData = pm.response.json();
-    var date = new Date(jsonData.data.date);
-    pm.expect(date).to.be.a('date');
+  var jsonData = pm.response.json();
+  var date = new Date(jsonData.data.date);
+  pm.expect(date).to.be.a("date");
 });
 
 // Sauvegarder l'ID pour les tests suivants
 pm.test("Save billing ID", function () {
-    var jsonData = pm.response.json();
-    pm.environment.set("billing_id", jsonData.data.id);
+  var jsonData = pm.response.json();
+  pm.environment.set("billing_id", jsonData.data.id);
 });
 ```
 
 #### Script de validation de réponse GET
+
 ```javascript
 pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
+  pm.response.to.have.status(200);
 });
 
 pm.test("Response is an array of billings", function () {
-    var jsonData = pm.response.json();
-    pm.expect(jsonData.success).to.be.true;
-    pm.expect(jsonData.data).to.be.an('array');
+  var jsonData = pm.response.json();
+  pm.expect(jsonData.success).to.be.true;
+  pm.expect(jsonData.data).to.be.an("array");
 });
 
 pm.test("Each billing has required fields", function () {
-    var jsonData = pm.response.json();
-    if (jsonData.data.length > 0) {
-        jsonData.data.forEach(billing => {
-            pm.expect(billing).to.have.property('id');
-            pm.expect(billing).to.have.property('date');
-        });
-    }
+  var jsonData = pm.response.json();
+  if (jsonData.data.length > 0) {
+    jsonData.data.forEach((billing) => {
+      pm.expect(billing).to.have.property("id");
+      pm.expect(billing).to.have.property("date");
+    });
+  }
 });
 ```
 
 #### Script pour tester les services inclus
+
 ```javascript
 pm.test("Services are included when requested", function () {
-    var url = pm.request.url.toString();
-    var jsonData = pm.response.json();
-    
-    if (url.includes('includeServices=true') && jsonData.data.length > 0) {
-        jsonData.data.forEach(billing => {
-            pm.expect(billing).to.have.property('services');
-            if (billing.services && billing.services.length > 0) {
-                billing.services.forEach(service => {
-                    pm.expect(service).to.have.property('id');
-                    pm.expect(service).to.have.property('serviceType');
-                    pm.expect(service).to.have.property('billingId');
-                    pm.expect(service).to.have.property('amount');
-                    pm.expect(service.serviceType).to.be.oneOf(['CARE', 'LESSON']);
-                });
-            }
+  var url = pm.request.url.toString();
+  var jsonData = pm.response.json();
+
+  if (url.includes("includeServices=true") && jsonData.data.length > 0) {
+    jsonData.data.forEach((billing) => {
+      pm.expect(billing).to.have.property("services");
+      if (billing.services && billing.services.length > 0) {
+        billing.services.forEach((service) => {
+          pm.expect(service).to.have.property("id");
+          pm.expect(service).to.have.property("serviceType");
+          pm.expect(service).to.have.property("billingId");
+          pm.expect(service).to.have.property("amount");
+          pm.expect(service.serviceType).to.be.oneOf(["CARE", "LESSON"]);
         });
-    }
+      }
+    });
+  }
 });
 ```
 
 ### Workflow de test complet
 
 #### 1. Créer une facture
+
 ```javascript
 // Pre-request Script
 pm.environment.set("test_date", new Date().toISOString());
@@ -400,11 +445,13 @@ POST {{base_url}}/api/billing
 ```
 
 #### 2. Récupérer la facture créée
+
 ```javascript
 GET {{base_url}}/api/billing?id={{billing_id}}
 ```
 
 #### 3. Mettre à jour la facture
+
 ```javascript
 // Pre-request Script
 var newDate = new Date();
@@ -420,6 +467,7 @@ PUT {{base_url}}/api/billing
 ```
 
 #### 4. Supprimer la facture
+
 ```javascript
 DELETE {{base_url}}/api/billing?id={{billing_id}}
 ```

@@ -4,7 +4,6 @@
 
 Ce dépôt est une application Next.js avec une base de données Postgres (via Docker), Prisma comme ORM et Better Auth pour l’authentification. Cette documentation décrit comment démarrer le projet, gérer la base, exécuter les migrations Prisma et les bonnes pratiques de notre workflow Git.
 
-
 ### Sommaire
 
 - [Prérequis](./prerequis.md)

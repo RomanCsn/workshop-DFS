@@ -20,6 +20,6 @@ npx prisma migrate deploy
 ```
 
 Notes:
+
 - Assurez-vous que la base Postgres est démarrée avant d’exécuter des commandes Prisma.
 - Vérifiez la variable de connexion (ex: `DATABASE_URL`) dans votre environnement.
-

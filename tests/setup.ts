@@ -1,9 +1,11 @@
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 let consoleErrorSpy: ReturnType<typeof vi.spyOn> | undefined;
 
 beforeAll(() => {
-  consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => undefined);
 });
 
 afterEach(() => {

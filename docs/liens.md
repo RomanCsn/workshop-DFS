@@ -8,4 +8,3 @@
 - Tutoriel interactif Next.js: `https://nextjs.org/learn`
 - Dépôt GitHub Next.js: `https://github.com/vercel/vercel`, `https://github.com/vercel/next.js`
 - Better Auth: `https://better-auth.com/docs/introduction`
-

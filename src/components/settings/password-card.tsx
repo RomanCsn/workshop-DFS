@@ -1,30 +1,36 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useMemo } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 
-import { changePasswordAction } from '@/app/dashboard/settings/actions'
-import type { PasswordActionState } from '@/app/dashboard/settings/contracts'
-import { PASSWORD_INITIAL_STATE } from '@/app/dashboard/settings/contracts'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { changePasswordAction } from "@/app/dashboard/settings/actions";
+import type { PasswordActionState } from "@/app/dashboard/settings/contracts";
+import { PASSWORD_INITIAL_STATE } from "@/app/dashboard/settings/contracts";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function PasswordCard() {
   const initialState = useMemo<PasswordActionState>(
     () => ({ ...PASSWORD_INITIAL_STATE }),
     [],
-  )
-  const [state, formAction] = useFormState(changePasswordAction, initialState)
+  );
+  const [state, formAction] = useFormState(changePasswordAction, initialState);
 
   return (
     <Card className="max-w-2xl">
       <CardHeader>
         <CardTitle>Update password</CardTitle>
         <CardDescription>
-          Keep your account secure with a fresh password. Signing out of other sessions is optional but
-          recommended when you change it.
+          Keep your account secure with a fresh password. Signing out of other
+          sessions is optional but recommended when you change it.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -39,7 +45,9 @@ export function PasswordCard() {
               aria-invalid={Boolean(state.fieldErrors?.currentPassword)}
             />
             {state.fieldErrors?.currentPassword ? (
-              <p className="text-sm text-destructive">{state.fieldErrors.currentPassword}</p>
+              <p className="text-sm text-destructive">
+                {state.fieldErrors.currentPassword}
+              </p>
             ) : null}
           </div>
           <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
@@ -53,7 +61,9 @@ export function PasswordCard() {
                 aria-invalid={Boolean(state.fieldErrors?.newPassword)}
               />
               {state.fieldErrors?.newPassword ? (
-                <p className="text-sm text-destructive">{state.fieldErrors.newPassword}</p>
+                <p className="text-sm text-destructive">
+                  {state.fieldErrors.newPassword}
+                </p>
               ) : null}
             </div>
             <div className="grid gap-2">
@@ -66,7 +76,9 @@ export function PasswordCard() {
                 aria-invalid={Boolean(state.fieldErrors?.confirmPassword)}
               />
               {state.fieldErrors?.confirmPassword ? (
-                <p className="text-sm text-destructive">{state.fieldErrors.confirmPassword}</p>
+                <p className="text-sm text-destructive">
+                  {state.fieldErrors.confirmPassword}
+                </p>
               ) : null}
             </div>
           </div>
@@ -83,7 +95,7 @@ export function PasswordCard() {
           <div className="flex items-center justify-between gap-4">
             {state.message ? (
               <p
-                className={`text-sm ${state.status === 'success' ? 'text-emerald-600 dark:text-emerald-500' : 'text-destructive'}`}
+                className={`text-sm ${state.status === "success" ? "text-emerald-600 dark:text-emerald-500" : "text-destructive"}`}
               >
                 {state.message}
               </p>
@@ -97,15 +109,15 @@ export function PasswordCard() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
-function SubmitButton({ status }: { status: PasswordActionState['status'] }) {
-  const { pending } = useFormStatus()
-  
+function SubmitButton({ status }: { status: PasswordActionState["status"] }) {
+  const { pending } = useFormStatus();
+
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? 'Saving…' : status === 'success' ? 'Saved' : 'Save changes'}
+      {pending ? "Saving…" : status === "success" ? "Saved" : "Save changes"}
     </Button>
-  )
+  );
 }

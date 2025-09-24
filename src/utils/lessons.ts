@@ -3,25 +3,22 @@ import { PrismaClient, Lesson, Prisma, Status } from "@/generated/prisma";
 const prisma = new PrismaClient();
 
 export async function createLesson(
-  data: Prisma.LessonCreateInput
+  data: Prisma.LessonCreateInput,
 ): Promise<Lesson> {
   try {
     return await prisma.lesson.create({ data });
   } catch (err) {
-    console.error('createLesson error:', err);
-    throw new Error('Failed to create the lesson.');
+    console.error("createLesson error:", err);
+    throw new Error("Failed to create the lesson.");
   }
 }
 
-export async function getAllLessons(
-  take = 100,
-  skip = 0
-): Promise<Lesson[]> {
+export async function getAllLessons(take = 100, skip = 0): Promise<Lesson[]> {
   try {
     return await prisma.lesson.findMany({
       take,
       skip,
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
       include: {
         monitor: {
           select: {
@@ -49,16 +46,14 @@ export async function getAllLessons(
       },
     });
   } catch (err) {
-    console.error('getAllLessons error:', err);
+    console.error("getAllLessons error:", err);
     throw new Error("Failed to retrieve the list of lessons.");
   }
 }
 
-export async function getLessonById(
-  id: string
-): Promise<Lesson | null> {
+export async function getLessonById(id: string): Promise<Lesson | null> {
   try {
-    return await prisma.lesson.findUnique({ 
+    return await prisma.lesson.findUnique({
       where: { id },
       include: {
         monitor: {
@@ -88,18 +83,18 @@ export async function getLessonById(
       },
     });
   } catch (err) {
-    console.error('getLessonById error:', err);
+    console.error("getLessonById error:", err);
     throw new Error("Error retrieving the lesson by id.");
   }
 }
 
 export async function updateLesson(
   id: string,
-  data: Prisma.LessonUpdateInput
+  data: Prisma.LessonUpdateInput,
 ): Promise<Lesson> {
   try {
-    return await prisma.lesson.update({ 
-      where: { id }, 
+    return await prisma.lesson.update({
+      where: { id },
       data,
       include: {
         monitor: {
@@ -128,14 +123,12 @@ export async function updateLesson(
       },
     });
   } catch (err) {
-    console.error('updateLesson error:', err);
+    console.error("updateLesson error:", err);
     throw new Error("Failed to update the lesson.");
   }
 }
 
-export async function deleteLesson(
-  id: string
-): Promise<Lesson> {
+export async function deleteLesson(id: string): Promise<Lesson> {
   try {
     // Use a transaction to first delete related PerformedServices, then the lesson
     return await prisma.$transaction(async (prisma) => {
@@ -147,7 +140,7 @@ export async function deleteLesson(
       });
 
       // Then delete the lesson
-      return await prisma.lesson.delete({ 
+      return await prisma.lesson.delete({
         where: { id },
         include: {
           monitor: {
@@ -174,7 +167,7 @@ export async function deleteLesson(
       });
     });
   } catch (err) {
-    console.error('deleteLesson error:', err);
+    console.error("deleteLesson error:", err);
     throw new Error("Failed to delete the lesson.");
   }
 }
@@ -182,14 +175,14 @@ export async function deleteLesson(
 export async function getLessonsByStatus(
   status: Status,
   take = 100,
-  skip = 0
+  skip = 0,
 ): Promise<Lesson[]> {
   try {
     return await prisma.lesson.findMany({
       where: { status },
       take,
       skip,
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
       include: {
         monitor: {
           select: {
@@ -216,7 +209,7 @@ export async function getLessonsByStatus(
       },
     });
   } catch (err) {
-    console.error('getLessonsByStatus error:', err);
+    console.error("getLessonsByStatus error:", err);
     throw new Error("Failed to retrieve lessons by status.");
   }
 }
@@ -225,7 +218,7 @@ export async function getLessonsByDateRange(
   startDate: Date,
   endDate: Date,
   take = 100,
-  skip = 0
+  skip = 0,
 ): Promise<Lesson[]> {
   try {
     return await prisma.lesson.findMany({
@@ -237,7 +230,7 @@ export async function getLessonsByDateRange(
       },
       take,
       skip,
-      orderBy: { date: 'asc' },
+      orderBy: { date: "asc" },
       include: {
         monitor: {
           select: {
@@ -264,7 +257,7 @@ export async function getLessonsByDateRange(
       },
     });
   } catch (err) {
-    console.error('getLessonsByDateRange error:', err);
+    console.error("getLessonsByDateRange error:", err);
     throw new Error("Failed to retrieve lessons by date range.");
   }
 }
@@ -272,14 +265,14 @@ export async function getLessonsByDateRange(
 export async function getLessonsByCustomerId(
   customerId: string,
   take = 100,
-  skip = 0
+  skip = 0,
 ): Promise<Lesson[]> {
   try {
     return await prisma.lesson.findMany({
       where: { customerId },
       take,
       skip,
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
       include: {
         monitor: {
           select: {
@@ -299,7 +292,7 @@ export async function getLessonsByCustomerId(
       },
     });
   } catch (err) {
-    console.error('getLessonsByCustomerId error:', err);
+    console.error("getLessonsByCustomerId error:", err);
     throw new Error("Failed to retrieve lessons by customer.");
   }
 }
@@ -307,14 +300,14 @@ export async function getLessonsByCustomerId(
 export async function getLessonsByMonitorId(
   monitorId: string,
   take = 100,
-  skip = 0
+  skip = 0,
 ): Promise<Lesson[]> {
   try {
     return await prisma.lesson.findMany({
       where: { monitorId },
       take,
       skip,
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
       include: {
         customer: {
           select: {
@@ -334,14 +327,14 @@ export async function getLessonsByMonitorId(
       },
     });
   } catch (err) {
-    console.error('getLessonsByMonitorId error:', err);
+    console.error("getLessonsByMonitorId error:", err);
     throw new Error("Failed to retrieve lessons by monitor.");
   }
 }
 
 export async function updateLessonStatus(
   id: string,
-  status: Status
+  status: Status,
 ): Promise<Lesson> {
   try {
     return await prisma.lesson.update({
@@ -365,7 +358,7 @@ export async function updateLessonStatus(
       },
     });
   } catch (err) {
-    console.error('updateLessonStatus error:', err);
+    console.error("updateLessonStatus error:", err);
     throw new Error("Failed to update lesson status.");
   }
 }

@@ -10,4 +10,3 @@ npm run build       # Construire l’application pour la production
 npm run start       # Démarrer en mode production (après build)
 npm run lint        # Lint du code
 ```
-

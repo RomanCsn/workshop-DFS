@@ -11,7 +11,6 @@
   - Ajoutez un résumé court et mentionnez les personnes à reviewer (#louis).
 - Après approbation, faites un squash-merge vers `main` et supprimez la branche.
 
-
 ### Conventions de commits
 
 Format de base:
@@ -33,10 +32,8 @@ Types utilisés:
 
 - Référence: [Cheatsheet Conventional Commits — qoomon](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13)
 
-
 ### Quand tu récupères le projet
 
 Voir le guide dans le `README` (section « Quand tu récupères le projet ») pour les étapes et commandes à exécuter.
 
 Lien utile: [`./prisma.md`](./prisma.md)
-

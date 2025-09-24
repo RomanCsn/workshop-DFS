@@ -1,78 +1,78 @@
-'use client'
+"use client";
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
+import * as React from "react";
+import { useRouter } from "next/navigation";
 
-import { cn } from "@/lib/utils"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-type Role = "OWNER" | "CUSTOMER"
+type Role = "OWNER" | "CUSTOMER";
 
 const roleHelp: Record<Role, string> = {
   OWNER: "You have horses or a stud.",
   CUSTOMER: "You book services.",
-}
+};
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [role, setRole] = React.useState<Role | "">("")
-  const [submitted, setSubmitted] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [success, setSuccess] = React.useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
-  const router = useRouter()
+  const [role, setRole] = React.useState<Role | "">("");
+  const [submitted, setSubmitted] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const router = useRouter();
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setSubmitted(true)
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setSubmitted(true);
+    setError(null);
+    setSuccess(null);
 
     if (!role) {
-      setError("Please select a role before continuing.")
-      return
+      setError("Please select a role before continuing.");
+      return;
     }
 
-    const formElement = e.currentTarget
-    const data = new FormData(formElement)
-    const firstName = (data.get("firstName") || "").toString().trim()
-    const lastName = (data.get("lastName") || "").toString().trim()
-    const email = (data.get("email") || "").toString().trim().toLowerCase()
-    const phone = (data.get("phone") || "").toString().trim()
-    const password = (data.get("password") || "").toString()
+    const formElement = e.currentTarget;
+    const data = new FormData(formElement);
+    const firstName = (data.get("firstName") || "").toString().trim();
+    const lastName = (data.get("lastName") || "").toString().trim();
+    const email = (data.get("email") || "").toString().trim().toLowerCase();
+    const phone = (data.get("phone") || "").toString().trim();
+    const password = (data.get("password") || "").toString();
 
     if (!password || password.length < 8) {
-      setError("Password must be at least 8 characters long.")
-      return
+      setError("Password must be at least 8 characters long.");
+      return;
     }
 
     if (!firstName || !lastName) {
-      setError("First name and last name are required.")
-      return
+      setError("First name and last name are required.");
+      return;
     }
 
     async function signUp() {
       try {
-        setIsSubmitting(true)
+        setIsSubmitting(true);
 
         const response = await authClient.signUp.email({
           email,
@@ -81,33 +81,39 @@ export function SignupForm({
           lastName,
           phone,
           role,
-        })
+        });
 
         if (response.error) {
-          setError(response.error.message ?? "Something went wrong. Please try again.")
-          return
+          setError(
+            response.error.message ?? "Something went wrong. Please try again.",
+          );
+          return;
         }
 
-        setSuccess("Account created! Redirecting you to the dashboard...")
-        formElement.reset()
-        setRole("")
-        setSubmitted(false)
+        setSuccess("Account created! Redirecting you to the dashboard...");
+        formElement.reset();
+        setRole("");
+        setSubmitted(false);
         setTimeout(() => {
-          router.push("/dashboard")
-        }, 800)
+          router.push("/dashboard");
+        }, 800);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to create account. Please try again.")
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to create account. Please try again.",
+        );
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
     }
 
-    void signUp()
+    void signUp();
   }
 
   const help = role
     ? roleHelp[role as Role]
-    : "Choose the role that best describes you."
+    : "Choose the role that best describes you.";
 
   return (
     <div className={cn("mx-auto w-full max-w-md", className)} {...props}>
@@ -147,7 +153,7 @@ export function SignupForm({
               <Select
                 value={role}
                 onValueChange={(v) => {
-                  setRole(v as Role)
+                  setRole(v as Role);
                 }}
                 disabled={isSubmitting}
               >
@@ -235,5 +241,5 @@ export function SignupForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
