@@ -130,9 +130,15 @@ enum Status{
 model Billing {
   id       String      @id @default(uuid())
   date     DateTime
+  situation Situation   @default(UNPAYED)
 
   //Relations
   services PerformedService[]
+}
+
+enum Situation{
+  UNPAYED
+  PAYED
 }
 
 model PerformedService {
