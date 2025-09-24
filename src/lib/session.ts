@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 
 export const getCurrentSession = cache(async () => {
   try {
-    const headerList = headers();
+    const headerList = await headers();
     return await auth.api.getSession({ headers: headerList });
   } catch (error) {
     console.error("Failed to fetch session", error);
