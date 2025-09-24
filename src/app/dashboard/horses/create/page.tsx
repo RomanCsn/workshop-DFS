@@ -1,28 +1,40 @@
 import Link from "next/link";
 
 import { HorseForm } from "@/components/horses/horse-form";
+import { Button } from "@/components/ui/button";
 import Dashboard from "@/layouts/dashboard";
 import { getCurrentUser } from "@/lib/session";
-import { Button } from "@/components/ui/button";
 
 export default async function CreateHorsePage() {
   const user = await getCurrentUser();
+  const isOwner = user?.role === "OWNER";
 
   return (
     <Dashboard user={user}>
       <div className="space-y-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-2xl font-semibold">Add a horse</h1>
             <p className="text-sm text-muted-foreground">
-              Capture the horse basic information to keep everyone in sync.
+              Create a new horse profile for your stable.
             </p>
           </div>
           <Button asChild variant="outline">
             <Link href="/dashboard/horses">Back to horses</Link>
           </Button>
         </div>
-        <HorseForm />
+
+        {!user ? (
+          <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+            You need to be signed in to add a horse.
+          </p>
+        ) : !isOwner ? (
+          <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+            Only stable owners can create horses.
+          </p>
+        ) : (
+          <HorseForm ownerId={user.id} redirectTo="/dashboard/horses" />
+        )}
       </div>
     </Dashboard>
   );

@@ -93,6 +93,12 @@ model Horse {
   id      String     @id @default(uuid())
   name    String?
   ownerId String     @map("owner_id")
+  description String?
+  color   String?
+  discipline String?
+  ageYears Int?      @map("age_years")
+  heightCm Int?      @map("height_cm")
+  weightKg Float?    @map("weight_kg")
 
   //Relations
   owner   User    @relation("HorseOwner", fields: [ownerId], references: [id])

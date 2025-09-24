@@ -6,12 +6,12 @@
 // - errors: 400 missing ownerId, 500 server error
 
 // PUT (create)
-// - body: { name?: string, ownerId: string }
+// - body: { ownerId: string, name: string, description?: string, color?: string, discipline?: string, ageYears?: number, heightCm?: number, weightKg?: number }
 // - returns: 200 { success: true, data: Horse }
 // - errors: 400 missing ownerId, 500 server error
 
 // PATCH (update)
-// - body: { id: string, name?: string, ownerId?: string }
+// - body: { id: string, ownerId?: string, name?: string, description?: string, color?: string, discipline?: string, ageYears?: number, heightCm?: number, weightKg?: number }
 // - returns: 200 { success: true, data: Horse }
 // - errors: 400 missing id, 500 server error
 
@@ -60,16 +60,31 @@ export async function GET(request: NextRequest) {
   }
 }
 
+const horseMetricsSchema = z.object({
+  description: z.string().trim().max(2000).optional(),
+  color: z.string().trim().max(100).optional(),
+  discipline: z.string().trim().max(100).optional(),
+  ageYears: z.number().int().min(0).max(60).optional(),
+  heightCm: z.number().int().min(0).max(250).optional(),
+  weightKg: z.number().min(0).max(2000).optional(),
+});
+
+const horseCreateSchema = horseMetricsSchema.extend({
+  ownerId: z.string().min(1),
+  name: z.string().trim().min(1),
+});
+
+const horseUpdateSchema = horseMetricsSchema.extend({
+  id: z.string().min(1),
+  ownerId: z.string().min(1).optional(),
+  name: z.string().trim().min(1).optional(),
+});
+
 //PUT CREATE A HORSE
 export async function PUT(request: NextRequest) {
   try {
     const json = await request.json();
-    const zod = z
-      .object({
-        ownerId: z.string().min(1),
-        name: z.string().min(1).optional(),
-      })
-      .safeParse(json);
+    const zod = horseCreateSchema.safeParse(json);
     if (!zod.success) {
       return NextResponse.json(
         { success: false, errors: z.treeifyError(zod.error) },
@@ -77,12 +92,13 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { name, ownerId } = zod.data;
+    const { ownerId, name, ...rest } = zod.data;
 
     const horse = await prisma.horse.create({
       data: {
-        name: name,
         ownerId,
+        name,
+        ...rest,
       },
     });
     return NextResponse.json({
@@ -104,13 +120,7 @@ export async function PUT(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const json = await request.json();
-    const zod = z
-      .object({
-        id: z.string().min(1),
-        name: z.string().min(1).optional(),
-        ownerId: z.string().min(1).optional(),
-      })
-      .safeParse(json);
+    const zod = horseUpdateSchema.safeParse(json);
     if (!zod.success) {
       return NextResponse.json(
         { success: false, errors: z.treeifyError(zod.error) },
@@ -118,11 +128,11 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { id, name, ownerId } = zod.data;
+    const { id, ...rest } = zod.data;
 
     const horse = await prisma.horse.update({
       where: { id },
-      data: { name, ownerId },
+      data: rest,
     });
     return NextResponse.json({
       success: true,
