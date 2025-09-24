@@ -136,3 +136,30 @@ export async function getBillingsByDateRange(
     throw new Error("Failed to retrieve billings by date range.");
   }
 }
+
+export async function getBillingsByUserId(
+  userId: string,
+  take = 100,
+  skip = 0
+): Promise<Billing[]> {
+  try {
+    return await prisma.billing.findMany({
+      where: {
+        services: {
+          some: {
+            userId,
+          },
+        },
+      },
+      take,
+      skip,
+      orderBy: { date: 'desc' },
+      include: {
+        services: true,
+      },
+    });
+  } catch (err) {
+    console.error('getBillingsByUserId error:', err);
+    throw new Error("Failed to retrieve billings by user id.");
+  }
+}
