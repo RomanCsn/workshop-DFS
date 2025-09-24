@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const zod = z.object({ ownerId: z.string().min(1) }).safeParse({ ownerId });
     if (!zod.success) {
       return NextResponse.json(
-        { success: false, errors: zod.error.flatten() },
+        { success: false, errors: z.treeifyError(zod.error) },
         { status: 400 },
       );
     }
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
       .safeParse(json);
     if (!zod.success) {
       return NextResponse.json(
-        { success: false, errors: zod.error.flatten() },
+        { success: false, errors: z.treeifyError(zod.error) },
         { status: 400 },
       );
     }
@@ -113,7 +113,7 @@ export async function PATCH(request: NextRequest) {
       .safeParse(json);
     if (!zod.success) {
       return NextResponse.json(
-        { success: false, errors: zod.error.flatten() },
+        { success: false, errors: z.treeifyError(zod.error) },
         { status: 400 },
       );
     }
@@ -146,7 +146,7 @@ export async function DELETE(request: NextRequest) {
     const zod = z.object({ id: z.string().min(1) }).safeParse(json);
     if (!zod.success) {
       return NextResponse.json(
-        { success: false, errors: zod.error.flatten() },
+        { success: false, errors: z.treeifyError(zod.error) },
         { status: 400 },
       );
     }
