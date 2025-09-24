@@ -1,4 +1,4 @@
-import { Home, Dog, Settings } from "lucide-react";
+import { Home, Dog, Settings, CreditCard } from "lucide-react";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -13,16 +13,19 @@ const ownerLinks = [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Horses", url: "/dashboard/horses", icon: Dog },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const customerLinks = [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const adminLinks =  [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 export default function Dashboard({ children, user }: DashboardProps) {

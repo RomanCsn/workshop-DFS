@@ -20,7 +20,18 @@ export async function getAllBillings(take = 100, skip = 0): Promise<Billing[]> {
       skip,
       orderBy: { date: "desc" },
       include: {
-        services: true,
+        services: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
   } catch (err) {
