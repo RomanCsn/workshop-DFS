@@ -5,6 +5,7 @@ import {
   updatePerformedService,
   deletePerformedService,
 } from "@/utils/services";
+import { createBilling } from "@/utils/billing";
 import { z } from "zod";
 
 /**
@@ -32,11 +33,11 @@ const QueryParamsSchema = z.object({
 // Body schemas
 const CreateServiceSchema = z.object({
   serviceType: z.enum(["CARE", "LESSON"]).default("LESSON"),
-  billingId: z.string().uuid("billingId must be a valid UUID"),
+  billingId: z.string().uuid("billingId must be a valid UUID").optional(),
   userId: z.string().uuid("userId must be a valid UUID"),
   serviceId: z.string().uuid("serviceId must be a valid UUID"),
   amount: z.number().min(0, "Amount must be positive").default(0),
-});
+}); 
 
 const UpdateServiceSchema = z.object({
   id: z.string().uuid("id must be a valid UUID"),
@@ -111,8 +112,20 @@ export async function POST(request: NextRequest) {
     }
 
     const validatedData = validationResult.data;
-    const service = await createPerformedService(validatedData);
 
+    let billingId = validatedData.billingId;
+    if (!billingId) {
+      const billing = await createBilling({ date: new Date(), services: { create: [] } });
+      billingId = billing.id;
+    }
+
+    const service = await createPerformedService({
+      serviceType: validatedData.serviceType,
+      billing: { connect: { id: billingId } },
+      user: { connect: { id: validatedData.userId } },
+      lesson: { connect: { id: validatedData.serviceId } },
+      amount: validatedData.amount ?? 0,
+    });
     return NextResponse.json(
       {
         success: true,

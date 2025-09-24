@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { HorseForm } from "@/components/horses/horse-form";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Dashboard from "@/layouts/dashboard";
 import { getCurrentUser } from "@/lib/session";
 
@@ -33,7 +34,17 @@ export default async function CreateHorsePage() {
             Only stable owners can create horses.
           </p>
         ) : (
-          <HorseForm ownerId={user.id} redirectTo="/dashboard/horses" />
+          <Card className="border-muted-foreground/10 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">Horse profile</CardTitle>
+              <CardDescription>
+                Give your horse a name and fill the key details to keep its profile fresh.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HorseForm ownerId={user.id} redirectTo="/dashboard/horses" />
+            </CardContent>
+          </Card>
         )}
       </div>
     </Dashboard>

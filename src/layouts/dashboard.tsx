@@ -10,13 +10,13 @@ type DashboardProps = {
 };
 
 const ownerLinks = [
-  { title: "Overview", url: "/dashboard", icon: Home },
+  { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Horses", url: "/dashboard/horses", icon: Dog },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
 const customerLinks = [
-  { title: "Overview", url: "/dashboard", icon: Home },
+  { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
