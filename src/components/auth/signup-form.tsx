@@ -93,7 +93,7 @@ export function SignupForm({
         setRole("")
         setSubmitted(false)
         setTimeout(() => {
-          router.push("/")
+          router.push("/dashboard")
         }, 800)
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to create account. Please try again.")

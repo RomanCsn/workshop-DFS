@@ -1,9 +1,13 @@
 import Dashboard from "@/layouts/dashboard";
+import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
+import { getCurrentSession } from "@/lib/session";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getCurrentSession();
+  const user = session?.user ?? null;
+
   return (
-    <Dashboard>
-      test
+    <Dashboard user={user}>
     </Dashboard>
-    )
+  );
 }

@@ -45,7 +45,7 @@ export function LoginForm({
           return
         }
 
-        router.push("/")
+        router.push("/dashboard")
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to sign in. Please try again.")
       } finally {
