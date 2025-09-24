@@ -214,10 +214,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: lessons,
     });
-    const { take, skip } = validationResult.data;
-    const lessons = await getAllLessons(take, skip);
-
-    return NextResponse.json({ success: true, data: lessons });
   } catch (error) {
     console.error("GET /api/lessons error:", error);
     return NextResponse.json(
@@ -250,17 +246,15 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validationResult.data;
 
-    // Transform the data to match Prisma's expected format
-    const lessonData = {
+    // Transform to match Prisma expected format
+    const lesson = await createLesson({
       date: validatedData.date,
       desc: validatedData.desc,
       status: validatedData.status,
       monitor: { connect: { id: validatedData.monitorId } },
       customer: { connect: { id: validatedData.customerId } },
       horse: { connect: { id: validatedData.horseId } },
-    };
-
-    const lesson = await createLesson(lessonData);
+    });
 
     return NextResponse.json(
       {
@@ -269,19 +263,6 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 },
     );
-
-    const data = validation.data;
-
-    const lesson = await createLesson({
-      date: new Date(data.date),
-      desc: data.desc,
-      status: data.status,
-      monitor: { connect: { id: data.monitorId } },
-      customer: { connect: { id: data.customerId } },
-      horse: { connect: { id: data.horseId } },
-    });
-
-    return NextResponse.json({ success: true, data: lesson }, { status: 201 });
   } catch (error) {
     console.error("POST /api/lessons error:", error);
     return NextResponse.json(

@@ -3,6 +3,7 @@ import { Home, Dog, Settings } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { User } from "@/generated/prisma";
+import { getCurrentUser } from "@/lib/session";
 
 type DashboardProps = {
   children: React.ReactNode;

@@ -3,7 +3,7 @@ import Link from "next/link";
 import Dashboard from "@/layouts/dashboard";
 import { getCurrentUser } from "@/lib/session";
 import { Button } from "@/components/ui/button";
-import { LessonsForm } from "@/components/Lessons/lessons-form";
+import { LessonsForm } from "@/components/lessons/lessons-form";
 
 export default async function CreateLessonsPage() {
   const user = await getCurrentUser();
