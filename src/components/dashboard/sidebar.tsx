@@ -1,9 +1,6 @@
-import { Calendar, Home, Book, Settings } from "lucide-react"
-
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -12,31 +9,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Lessons",
-    url: "#",
-    icon: Calendar
-  },
-  {
-    title: "Billing",
-    url: "#",
-    icon: Book,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-]
-
-export function DashboardSidebar() {
+export function DashboardSidebar({
+  links,
+}) {
   return (
     <Sidebar>
       <SidebarContent>
@@ -44,17 +19,16 @@ export function DashboardSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {links.map((link) => (
+                <SidebarMenuItem key={link.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                    <a href={link.url}>
+                      <link.icon />
+                      <span>{link.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

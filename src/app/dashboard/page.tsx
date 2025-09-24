@@ -1,13 +1,12 @@
 import Dashboard from "@/layouts/dashboard";
-import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
-import { getCurrentSession } from "@/lib/session";
-
+import { getCurrentUser } from "@/lib/session";
 export default async function Page() {
-  const session = await getCurrentSession();
-  const user = session?.user ?? null;
+
+  const session = await getCurrentUser()
 
   return (
-    <Dashboard user={user}>
+    <Dashboard user={{ session }}>
+      <div className="text-2xl font-bold">Welcome to the Dashboard</div>
     </Dashboard>
   );
 }

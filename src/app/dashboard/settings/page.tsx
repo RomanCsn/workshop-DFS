@@ -4,10 +4,9 @@ import { getCurrentSession } from '@/lib/session'
 
 export default async function SettingsPage() {
   const session = await getCurrentSession()
-  const user = session?.user ?? null
 
   return (
-    <Dashboard user={user}>
+    <Dashboard>
       <SettingsContent session={session} />
     </Dashboard>
   )
