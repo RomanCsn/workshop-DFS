@@ -1,4 +1,4 @@
-import { Home, Settings } from "lucide-react";
+import { Home, Dog, Settings } from "lucide-react";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -11,6 +11,7 @@ type DashboardProps = {
 
 const ownerLinks = [
   { title: "Overview", url: "/dashboard", icon: Home },
+  { title: "Horses", url: "/dashboard/horses", icon: Dog },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
