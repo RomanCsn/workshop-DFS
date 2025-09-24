@@ -26,11 +26,40 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-//GET ALL HORSES BY OWNER ID
+//GET ALL HORSES
+
+export async function GET_ALL(request: NextRequest) {
+  try {
+    const horses = await prisma.horse.findMany();
+    return NextResponse.json({
+      success: true,
+      data: horses,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Internal server error",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+//GET ALL HORSES BY OWNER ID OR ALL HORSES
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("ownerId");
+
+    // If no ownerId is provided, return all horses
+    if (!ownerId) {
+      const horses = await prisma.horse.findMany();
+      return NextResponse.json({
+        success: true,
+        data: horses,
+      });
+    }
 
     const zod = z.object({ ownerId: z.string().min(1) }).safeParse({ ownerId });
     if (!zod.success) {
