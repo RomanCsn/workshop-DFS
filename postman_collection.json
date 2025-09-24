@@ -1,0 +1,498 @@
+{
+  "info": {
+    "name": "Workshop DFS API",
+    "description": "API collection for the Workshop DFS project with Services, Billing, and Lessons endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "workshop-dfs-api",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "Get All Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/services?take=10&skip=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"],
+              "query": [
+                {
+                  "key": "take",
+                  "value": "10",
+                  "description": "Number of items to return (1-1000)"
+                },
+                {
+                  "key": "skip",
+                  "value": "0",
+                  "description": "Number of items to skip"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"LESSON\",\n  \"billingId\": \"{{billingId}}\",\n  \"userId\": \"{{userId}}\",\n  \"serviceId\": \"{{lessonId}}\",\n  \"amount\": 50.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"]
+            }
+          }
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{serviceId}}\",\n  \"amount\": 60.0,\n  \"serviceType\": \"CARE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"]
+            }
+          }
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/services?id={{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{serviceId}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "item": [
+        {
+          "name": "Get All Billings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing?take=10&skip=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"],
+              "query": [
+                {
+                  "key": "take",
+                  "value": "10"
+                },
+                {
+                  "key": "skip",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Billing by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing?id={{billingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{billingId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Billing with Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing?id={{billingId}}&includeServices=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{billingId}}"
+                },
+                {
+                  "key": "includeServices",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Billings by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing?startDate=2025-01-01&endDate=2025-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-12-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Billing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-09-24T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/billing",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"]
+            }
+          }
+        },
+        {
+          "name": "Update Billing",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{billingId}}\",\n  \"date\": \"2025-09-25T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/billing",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"]
+            }
+          }
+        },
+        {
+          "name": "Delete Billing",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing?id={{billingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{billingId}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "Get All Lessons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?take=10&skip=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "take",
+                  "value": "10"
+                },
+                {
+                  "key": "skip",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lesson by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?id={{lessonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{lessonId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lessons by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?status=PENDING",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "description": "PENDING | IN_PROGRESS | FINISHED"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lessons by Customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?customerId={{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "customerId",
+                  "value": "{{customerId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lessons by Monitor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?monitorId={{monitorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "monitorId",
+                  "value": "{{monitorId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lessons by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?startDate=2025-09-01&endDate=2025-09-30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-09-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-09-30"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-09-25T14:00:00Z\",\n  \"desc\": \"Lesson d'équitation débutant\",\n  \"status\": \"PENDING\",\n  \"monitorId\": \"{{monitorId}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"horseId\": \"{{horseId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Update Lesson",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{lessonId}}\",\n  \"desc\": \"Lesson d'équitation intermédiaire\",\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Update Lesson Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{lessonId}}\",\n  \"status\": \"FINISHED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Delete Lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?id={{lessonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{lessonId}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "description": "Base URL for the API"
+    },
+    {
+      "key": "serviceId",
+      "value": "",
+      "description": "UUID of a performed service"
+    },
+    {
+      "key": "billingId",
+      "value": "",
+      "description": "UUID of a billing record"
+    },
+    {
+      "key": "lessonId",
+      "value": "",
+      "description": "UUID of a lesson"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "description": "UUID of a user"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "description": "UUID of a customer"
+    },
+    {
+      "key": "monitorId",
+      "value": "",
+      "description": "UUID of a monitor"
+    },
+    {
+      "key": "horseId",
+      "value": "",
+      "description": "UUID of a horse"
+    }
+  ]
+}
