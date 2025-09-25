@@ -7,9 +7,9 @@ import {
   getBillingById,
   getBillingWithServices,
   getBillingsByDateRange,
-  getBillingsByUserId,
-} from '@/utils/billing';
-import { z } from 'zod';
+  getBillingCount,
+} from "@/utils/billing";
+import { z } from "zod";
 
 /**
  * Helper: Preprocessor for query parameters that may be

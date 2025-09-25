@@ -20,7 +20,18 @@ export async function getAllBillings(take = 100, skip = 0): Promise<Billing[]> {
       skip,
       orderBy: { date: "desc" },
       include: {
-        services: true,
+        services: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
   } catch (err) {
@@ -137,29 +148,11 @@ export async function getBillingsByDateRange(
   }
 }
 
-export async function getBillingsByUserId(
-  userId: string,
-  take = 100,
-  skip = 0
-): Promise<Billing[]> {
+export async function getBillingCount(): Promise<number> {
   try {
-    return await prisma.billing.findMany({
-      where: {
-        services: {
-          some: {
-            userId,
-          },
-        },
-      },
-      take,
-      skip,
-      orderBy: { date: 'desc' },
-      include: {
-        services: true,
-      },
-    });
+    return await prisma.billing.count();
   } catch (err) {
-    console.error('getBillingsByUserId error:', err);
-    throw new Error("Failed to retrieve billings by user id.");
+    console.error("getBillingCount error:", err);
+    throw new Error("Failed to get billing count.");
   }
 }

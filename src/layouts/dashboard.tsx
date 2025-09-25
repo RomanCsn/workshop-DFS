@@ -1,3 +1,4 @@
+import { Home, Dog, Settings, CreditCard } from "lucide-react";
 import { Home, Dog, Settings, Receipt, Paperclip } from "lucide-react";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -8,6 +9,7 @@ type DashboardProps = {
   children: React.ReactNode;
   user: User | null;
 };
+
 
 const baseLinks = [
   { title: "Vue generale", url: "/dashboard/admin", icon: Home },

@@ -1,5 +1,7 @@
+"use client"
+
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
-import { headers } from "next/headers"
+import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -29,55 +31,82 @@ type HorsesResponse = {
   }>
 }
 
-export async function SectionCards() {
-  const headerList = await headers()
-  const forwardedHost = headerList.get("x-forwarded-host") ?? headerList.get("host")
-  const forwardedProto = headerList.get("x-forwarded-proto") ?? "http"
+type BillingsResponse = {
+  success: boolean
+  data: number
+}
 
-  const envBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.NEXTAUTH_URL ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    ""
+export function SectionCards() {
+  const [stats, setStats] = useState({
+    totalCustomers: 0,
+    lastSixMonthsCustomers: 0,
+    percentageLastSixMonths: 0,
+    totalHorses: 0,
+    totalBillings: 0
+  })
+  const [loading, setLoading] = useState(true)
 
-  const derivedHost = forwardedHost
-    ? `${forwardedProto}://${forwardedHost}`
-    : envBaseUrl
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        // Fetch users data
+        const usersRes = await fetch('/api/user')
+        let userData = { totalCustomers: 0, lastSixMonthsCustomers: 0, percentageLastSixMonths: 0 }
+        if (usersRes.ok) {
+          const usersPayload = await usersRes.json() as UsersResponse
+          userData = {
+            totalCustomers: usersPayload.data?.totalCustomers ?? 0,
+            lastSixMonthsCustomers: usersPayload.data?.lastSixMonthsCustomers ?? 0,
+            percentageLastSixMonths: usersPayload.data?.percentageLastSixMonths ?? 0
+          }
+        }
 
-  const baseUrl = derivedHost || "http://localhost:3000"
+        // Fetch horses data
+        const horsesRes = await fetch('/api/horse')
+        let totalHorses = 0
+        if (horsesRes.ok) {
+          const horsesPayload = await horsesRes.json() as HorsesResponse
+          totalHorses = horsesPayload.data?.length ?? 0
+        }
 
-  const normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl
+        // Fetch billings data
+        const billingsRes = await fetch('/api/billing/count')
+        let totalBillings = 0
+        if (billingsRes.ok) {
+          const billingsPayload = await billingsRes.json() as BillingsResponse
+          totalBillings = billingsPayload.data ?? 0
+        }
 
-  let totalCustomers = 0
-  let lastSixMonthsCustomers = 0
-  let percentageLastSixMonths = 0
-  try {
-    const res = await fetch(`${normalizedBaseUrl}/api/user`, {
-      next: { revalidate: 0 },
-    })
-
-    if (res.ok) {
-      const payload = (await res.json()) as UsersResponse
-      totalCustomers = payload.data?.totalCustomers ?? 0
-      lastSixMonthsCustomers = payload.data?.lastSixMonthsCustomers ?? 0
-      percentageLastSixMonths = payload.data?.percentageLastSixMonths ?? 0
+        setStats({
+          ...userData,
+          totalHorses,
+          totalBillings
+        })
+      } catch (error) {
+        console.error('Error fetching stats:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  } catch (error) {
-    // Ignore network failures; fallback to zero.
-  }
 
-  let totalHorses = 0
-  try {
-    const res = await fetch(`${normalizedBaseUrl}/api/horse`, {
-      next: { revalidate: 0 },
-    })
+    fetchStats()
+  }, [])
 
-    if (res.ok) {
-      const payload = (await res.json()) as HorsesResponse
-      totalHorses = payload.data?.length ?? 0
-    }
-  } catch (error) {
-    // Ignore network failures; fallback to zero.
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} className="@container/card">
+            <CardHeader>
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+    )
   }
 
   const totalCustomersLabel = new Intl.NumberFormat("fr-FR").format(
@@ -90,22 +119,18 @@ export async function SectionCards() {
     percentageLastSixMonths > 0 ? "+" : ""
   }${percentageLastSixMonths}%`
   const totalHorsesLabel = new Intl.NumberFormat("fr-FR").format(totalHorses)
-
-  const isPositiveTrend = percentageLastSixMonths >= 0
+  const isPositiveTrend = stats.percentageLastSixMonths >= 0
 
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-4 gap-6 w-full *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs">
-      <Card className="@container/card">
+    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs">
+            <Card className="@container/card">
         <CardHeader>
           <CardDescription>Revenu total</CardDescription>
+
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {totalBillingsLabel}
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -114,6 +139,7 @@ export async function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             Visiteurs sur les 6 derniers mois
+
           </div>
         </CardFooter>
       </Card>
@@ -151,10 +177,6 @@ export async function SectionCards() {
             {totalHorsesLabel}
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -163,6 +185,7 @@ export async function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             {totalHorses} chevaux heberges
+
           </div>
         </CardFooter>
       </Card>
