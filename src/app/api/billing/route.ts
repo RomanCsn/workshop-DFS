@@ -52,7 +52,8 @@ const QueryParamsSchema = z.object({
   }, z.boolean().default(false)),
   startDate: parseQueryDate,
   endDate: parseQueryDate,
-  id: parseOptionalUuid("id must be a valid UUID"),
+  id: z.string().uuid('id must be a valid UUID').optional(),
+  userId: z.string().min(1).optional(),
 });
 
 // Body schemas
@@ -89,12 +90,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const validationResult = QueryParamsSchema.safeParse({
-      take: searchParams.get("take"),
-      skip: searchParams.get("skip"),
-      includeServices: searchParams.get("includeServices"),
-      startDate: searchParams.get("startDate"),
-      endDate: searchParams.get("endDate"),
-      id: searchParams.get("id"),
+      take: searchParams.get('take'),
+      skip: searchParams.get('skip'),
+      includeServices: searchParams.get('includeServices'),
+      startDate: searchParams.get('startDate'),
+      endDate: searchParams.get('endDate'),
+      id: searchParams.get('id') ?? undefined,
+      userId: searchParams.get('userId') ?? undefined,
     });
 
     if (!validationResult.success) {
@@ -108,8 +110,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { take, skip, includeServices, startDate, endDate, id } =
-      validationResult.data;
+    const { take, skip, includeServices, startDate, endDate, id, userId } = validationResult.data;
 
     let billings;
 
@@ -135,8 +136,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // If date range is specified
-    if (startDate && endDate) {
+    // If filtering by userId
+    if (userId) {
+      billings = await getBillingsByUserId(userId, take, skip);
+    } else if (startDate && endDate) {
       if (startDate > endDate) {
         return NextResponse.json(
           {

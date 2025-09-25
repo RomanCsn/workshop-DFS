@@ -39,6 +39,28 @@ type HorseFormProps = {
 
 type FormStatus = "idle" | "saving" | "success" | "error";
 
+function extractServerError(value: unknown): string | null {
+  if (!value) return null;
+  if (typeof value === "string") return value;
+
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const message = extractServerError(entry);
+      if (message) return message;
+    }
+    return null;
+  }
+
+  if (typeof value === "object") {
+    for (const entry of Object.values(value)) {
+      const message = extractServerError(entry);
+      if (message) return message;
+    }
+  }
+
+  return null;
+}
+
 const emptyValues: HorseFormValues = {
   name: "",
   description: "",
@@ -181,10 +203,13 @@ export function HorseForm({
         success: boolean;
         data?: HorseRecord;
         error?: string;
+        errors?: unknown;
       };
 
       if (!response.ok || !json.success || !json.data) {
-        throw new Error(json.error || "Failed to save the horse.");
+        const serverError =
+          json.error || extractServerError(json.errors) || "Failed to save the horse.";
+        throw new Error(serverError);
       }
 
       setStatus("success");

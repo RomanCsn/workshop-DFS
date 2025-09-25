@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DeleteHorseButton } from "@/components/horses/delete-horse-button";
 import Dashboard from "@/layouts/dashboard";
 import { getCurrentUser } from "@/lib/session";
 
@@ -94,60 +95,65 @@ export default async function HorseDetailPage({ params }: HorseDetailPageProps) 
             We couldn&apos;t find that horse. Try returning to the list and selecting another one.
           </div>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>{horse.name ?? "Unnamed horse"}</CardTitle>
-              <CardDescription>{formatText(horse.discipline)}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6 text-sm">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Color</span>
-                  <span className="font-medium text-foreground">
-                    {formatText(horse.color)}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Age</span>
-                  <span className="font-medium text-foreground">
-                    {formatMetric(horse.ageYears, "years")}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Height</span>
-                  <span className="font-medium text-foreground">
-                    {formatMetric(horse.heightCm, "cm")}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Weight</span>
-                  <span className="font-medium text-foreground">
-                    {formatMetric(horse.weightKg, "kg")}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Owner ID</span>
-                  <span className="font-medium text-foreground">{horse.ownerId}</span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Horse ID</span>
-                  <span className="font-medium text-foreground">{horse.id}</span>
-                </div>
+          <Card className="border-muted-foreground/10 shadow-md">
+            <CardHeader className="space-y-3">
+              <div>
+                <CardTitle className="text-3xl font-semibold">
+                  {horse.name ?? "Unnamed horse"}
+                </CardTitle>
+                <CardDescription>{formatText(horse.discipline)}</CardDescription>
               </div>
-
+              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full bg-muted px-3 py-1">
+                  Color: {formatText(horse.color)}
+                </span>
+                <span className="rounded-full bg-muted px-3 py-1">
+                  Age: {formatMetric(horse.ageYears, "yrs")}
+                </span>
+                <span className="rounded-full bg-muted px-3 py-1">
+                  Height: {formatMetric(horse.heightCm, "cm")}
+                </span>
+                <span className="rounded-full bg-muted px-3 py-1">
+                  Weight: {formatMetric(horse.weightKg, "kg")}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-8 text-sm">
               {horse.description ? (
-                <div className="flex flex-col gap-2">
-                  <span className="text-muted-foreground">Description</span>
-                  <p className="whitespace-pre-line text-foreground">
+                <div className="space-y-3">
+                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Stable notes
+                  </span>
+                  <p className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4 leading-relaxed text-foreground">
                     {horse.description}
                   </p>
                 </div>
-              ) : null}
+              ) : (
+                <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 text-center text-muted-foreground">
+                  No description yet. Add one to keep the team aligned.
+                </div>
+              )}
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Owner ID
+                  </p>
+                  <p className="mt-1 font-medium text-foreground">{horse.ownerId}</p>
+                </div>
+                <div className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Horse ID
+                  </p>
+                  <p className="mt-1 font-medium text-foreground">{horse.id}</p>
+                </div>
+              </div>
             </CardContent>
             <CardFooter className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
                 <Link href={`/dashboard/horses/${horse.id}/edit`}>Edit horse</Link>
               </Button>
+              <DeleteHorseButton horseId={horse.id} />
               <Button asChild>
                 <Link href="/dashboard/horses">Back to list</Link>
               </Button>

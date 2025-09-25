@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 
 import { HorseForm, type HorseRecord } from "@/components/horses/horse-form";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Dashboard from "@/layouts/dashboard";
 import { getCurrentUser } from "@/lib/session";
 
@@ -87,12 +88,22 @@ export default async function EditHorsePage({ params }: EditHorsePageProps) {
             We couldn&apos;t find that horse. Try going back to the list and selecting another one.
           </p>
         ) : (
-          <HorseForm
-            ownerId={user.id}
-            horseId={horse.id}
-            initialHorse={horse}
-            redirectTo={`/dashboard/horses/${horse.id}`}
-          />
+          <Card className="border-muted-foreground/10 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">Horse profile</CardTitle>
+              <CardDescription>
+                Adjust measurements or refresh the summary so everyone has the latest info.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HorseForm
+                ownerId={user.id}
+                horseId={horse.id}
+                initialHorse={horse}
+                redirectTo={`/dashboard/horses/${horse.id}`}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </Dashboard>

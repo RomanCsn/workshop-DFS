@@ -8,12 +8,12 @@
 // PUT (create)
 // - body: { ownerId: string, name: string, description?: string, color?: string, discipline?: string, ageYears?: number, heightCm?: number, weightKg?: number }
 // - returns: 200 { success: true, data: Horse }
-// - errors: 400 missing ownerId, 500 server error
+// - errors: 400 invalid payload, 500 server error
 
 // PATCH (update)
 // - body: { id: string, ownerId?: string, name?: string, description?: string, color?: string, discipline?: string, ageYears?: number, heightCm?: number, weightKg?: number }
 // - returns: 200 { success: true, data: Horse }
-// - errors: 400 missing id, 500 server error
+// - errors: 400 invalid payload, 500 server error
 
 // DELETE
 // - body: { id: string }
@@ -47,10 +47,89 @@ export async function GET_ALL(request: NextRequest) {
 }
 
 //GET ALL HORSES BY OWNER ID OR ALL HORSES
+const ownerQuerySchema = z.object({ ownerId: z.string().min(1, "Owner identifier is required.") });
+
+const sanitizeString = (value: unknown, max: number) => {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return trimmed.slice(0, max);
+};
+
+const sanitizeInteger = (value: unknown, min: number, max: number) => {
+  if (value === null || value === undefined || value === "") return undefined;
+  const numericValue = typeof value === "string" ? Number(value) : value;
+  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) return undefined;
+  const intValue = Math.trunc(numericValue);
+  if (intValue < min || intValue > max) return undefined;
+  return intValue;
+};
+
+const sanitizeFloat = (value: unknown, min: number, max: number) => {
+  if (value === null || value === undefined || value === "") return undefined;
+  const numericValue = typeof value === "string" ? Number(value) : value;
+  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) return undefined;
+  if (numericValue < min || numericValue > max) return undefined;
+  return numericValue;
+};
+
+const buildCreatePayload = (raw: unknown) => {
+  const body = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+
+  const ownerId = typeof body.ownerId === "string" ? body.ownerId.trim() : "";
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+
+  if (!ownerId) {
+    return { ok: false, error: "Owner identifier is missing." } as const;
+  }
+
+  if (!name) {
+    return { ok: false, error: "Horse name is required." } as const;
+  }
+
+  const data = {
+    ownerId,
+    name,
+    description: sanitizeString(body.description, 2000),
+    color: sanitizeString(body.color, 100),
+    discipline: sanitizeString(body.discipline, 100),
+    ageYears: sanitizeInteger(body.ageYears, 0, 60),
+    heightCm: sanitizeInteger(body.heightCm, 0, 250),
+    weightKg: sanitizeFloat(body.weightKg, 0, 2000),
+  } satisfies Record<string, string | number | undefined>;
+
+  const cleaned = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined),
+  ) as Record<string, string | number>;
+
+  return { ok: true, data: cleaned } as const;
+};
+
+const buildUpdatePayload = (raw: unknown) => {
+  const body = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+
+  const data = {
+    ownerId: sanitizeString(body.ownerId, 100),
+    name: sanitizeString(body.name, 100),
+    description: sanitizeString(body.description, 2000),
+    color: sanitizeString(body.color, 100),
+    discipline: sanitizeString(body.discipline, 100),
+    ageYears: sanitizeInteger(body.ageYears, 0, 60),
+    heightCm: sanitizeInteger(body.heightCm, 0, 250),
+    weightKg: sanitizeFloat(body.weightKg, 0, 2000),
+  } satisfies Record<string, string | number | undefined>;
+
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined),
+  ) as Record<string, string | number>;
+};
+
+//GET ALL HORSES BY OWNER ID
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("ownerId");
+    const parsed = ownerQuerySchema.safeParse({ ownerId });
 
     // If no ownerId is provided, return all horses with owner information
     if (!ownerId) {
@@ -75,14 +154,17 @@ export async function GET(request: NextRequest) {
     const zod = z.object({ ownerId: z.string().min(1) }).safeParse({ ownerId });
     if (!zod.success) {
       return NextResponse.json(
-        { success: false, errors: z.treeifyError(zod.error) },
+        {
+          success: false,
+          error: firstIssue?.message ?? "Owner identifier is required.",
+        },
         { status: 400 },
       );
     }
 
     const horses = await prisma.horse.findMany({
       where: {
-        ownerId: zod.data.ownerId,
+        ownerId: parsed.data.ownerId,
       },
       include: {
         owner: {
@@ -110,46 +192,21 @@ export async function GET(request: NextRequest) {
   }
 }
 
-const horseMetricsSchema = z.object({
-  description: z.string().trim().max(2000).optional(),
-  color: z.string().trim().max(100).optional(),
-  discipline: z.string().trim().max(100).optional(),
-  ageYears: z.number().int().min(0).max(60).optional(),
-  heightCm: z.number().int().min(0).max(250).optional(),
-  weightKg: z.number().min(0).max(2000).optional(),
-});
-
-const horseCreateSchema = horseMetricsSchema.extend({
-  ownerId: z.string().min(1),
-  name: z.string().trim().min(1),
-});
-
-const horseUpdateSchema = horseMetricsSchema.extend({
-  id: z.string().min(1),
-  ownerId: z.string().min(1).optional(),
-  name: z.string().trim().min(1).optional(),
-});
-
 //PUT CREATE A HORSE
 export async function PUT(request: NextRequest) {
   try {
     const json = await request.json();
-    const zod = horseCreateSchema.safeParse(json);
-    if (!zod.success) {
+    const result = buildCreatePayload(json);
+
+    if (!result.ok) {
       return NextResponse.json(
-        { success: false, errors: z.treeifyError(zod.error) },
+        { success: false, error: result.error, received: json },
         { status: 400 },
       );
     }
 
-    const { ownerId, name, ...rest } = zod.data;
-
     const horse = await prisma.horse.create({
-      data: {
-        ownerId,
-        name,
-        ...rest,
-      },
+      data: result.data,
     });
     return NextResponse.json({
       success: true,
@@ -170,19 +227,27 @@ export async function PUT(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const json = await request.json();
-    const zod = horseUpdateSchema.safeParse(json);
-    if (!zod.success) {
+    const id = typeof json?.id === "string" ? json.id.trim() : "";
+
+    if (!id) {
       return NextResponse.json(
-        { success: false, errors: z.treeifyError(zod.error) },
+        { success: false, error: "Horse identifier is missing.", received: json },
         { status: 400 },
       );
     }
 
-    const { id, ...rest } = zod.data;
+    const updateData = buildUpdatePayload(json);
+
+    if (!Object.keys(updateData).length) {
+      return NextResponse.json(
+        { success: false, error: "No changes provided.", received: json },
+        { status: 400 },
+      );
+    }
 
     const horse = await prisma.horse.update({
       where: { id },
-      data: rest,
+      data: updateData,
     });
     return NextResponse.json({
       success: true,
@@ -203,15 +268,20 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const json = await request.json();
-    const zod = z.object({ id: z.string().min(1) }).safeParse(json);
-    if (!zod.success) {
+    const parsed = z.object({ id: z.string().min(1) }).safeParse(json);
+
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues.at(0);
       return NextResponse.json(
-        { success: false, errors: z.treeifyError(zod.error) },
+        {
+          success: false,
+          error: firstIssue?.message ?? "Horse identifier is required.",
+        },
         { status: 400 },
       );
     }
 
-    const { id } = zod.data;
+    const { id } = parsed.data;
     const horse = await prisma.horse.delete({
       where: { id },
     });

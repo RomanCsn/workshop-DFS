@@ -107,40 +107,52 @@ export default async function HorsesPage() {
             You don&apos;t have any horses yet. Create one to get started.
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {horses.map((horse) => (
-              <Card key={horse.id}>
-                <CardHeader>
-                  <CardTitle>{horse.name ?? "Unnamed horse"}</CardTitle>
-                  <CardDescription>
-                    {formatText(horse.discipline)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm text-muted-foreground">
-                  <div>
-                    <span className="font-medium text-foreground">Color:</span>{" "}
-                    <span>{formatText(horse.color)}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-foreground">Age:</span>{" "}
-                    <span>{formatMetric(horse.ageYears, "years")}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-foreground">Height:</span>{" "}
-                    <span>{formatMetric(horse.heightCm, "cm")}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-foreground">Weight:</span>{" "}
-                    <span>{formatMetric(horse.weightKg, "kg")}</span>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild variant="outline">
-                    <Link href={`/dashboard/horses/${horse.id}`}>View details</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {horses.map((horse) => {
+              const preview = formatText(horse.description);
+
+              return (
+                <Card key={horse.id} className="flex flex-col gap-2 border-muted-foreground/10 shadow-sm transition hover:shadow-md">
+                  <CardHeader className="space-y-3">
+                    <div>
+                      <CardTitle className="text-xl font-semibold">
+                        {horse.name ?? "Unnamed horse"}
+                      </CardTitle>
+                      <CardDescription className="truncate">
+                        {formatText(horse.discipline)}
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      <span className="rounded-full bg-muted px-2 py-1">
+                        Color: {formatText(horse.color)}
+                      </span>
+                      <span className="rounded-full bg-muted px-2 py-1">
+                        Age: {formatMetric(horse.ageYears, "yrs")}
+                      </span>
+                      <span className="rounded-full bg-muted px-2 py-1">
+                        Height: {formatMetric(horse.heightCm, "cm")}
+                      </span>
+                      <span className="rounded-full bg-muted px-2 py-1">
+                        Weight: {formatMetric(horse.weightKg, "kg")}
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1 text-sm text-muted-foreground">
+                    <p className="line-clamp-3 leading-relaxed">
+                      {preview !== "—" ? preview : "No description yet."}
+                    </p>
+                  </CardContent>
+                  <CardFooter className="flex flex-wrap gap-3">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/dashboard/horses/${horse.id}`}>View</Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link href={`/dashboard/horses/${horse.id}/edit`}>Edit</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

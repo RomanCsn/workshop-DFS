@@ -246,17 +246,15 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validationResult.data;
 
-    // Transform the data to match Prisma's expected format
-    const lessonData = {
+    // Transform to match Prisma expected format
+    const lesson = await createLesson({
       date: validatedData.date,
       desc: validatedData.desc,
       status: validatedData.status,
       monitor: { connect: { id: validatedData.monitorId } },
       customer: { connect: { id: validatedData.customerId } },
       horse: { connect: { id: validatedData.horseId } },
-    };
-
-    const lesson = await createLesson(lessonData);
+    });
 
     return NextResponse.json(
       {
