@@ -1,6 +1,9 @@
 import { Home, Dog, Settings, CreditCard } from "lucide-react";
+<<<<<<< HEAD
 import { Home, Dog, Settings, Receipt, Paperclip } from "lucide-react";
 
+=======
+>>>>>>> fb5d7b5 (feat: management billing admin or not and added in sidebar)
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";

@@ -14,7 +14,11 @@ export default function AllBillings() {
         setData(data);
         setLoading(false);
       });
+<<<<<<< HEAD
   }, []);
+=======
+  });
+>>>>>>> fb5d7b5 (feat: management billing admin or not and added in sidebar)
 
   if (loading) return <p>Loading...</p>;
 
@@ -30,6 +34,7 @@ export default function AllBillings() {
 
   return (
     <div>
+      <h1>All Billings</h1>
       <Table className="w-full">
         <TableCaption>All billings</TableCaption>
         <TableHeader>

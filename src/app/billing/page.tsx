@@ -16,3 +16,6 @@ export default async function Page() {
     </Dashboard>
   );
 }
+
+//dashboard route
+//Route Sidebar
