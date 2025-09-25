@@ -7,6 +7,7 @@ import {
   getBillingById,
   getBillingWithServices,
   getBillingsByDateRange,
+  getBillingCount,
 } from "@/utils/billing";
 import { z } from "zod";
 

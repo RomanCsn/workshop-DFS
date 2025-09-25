@@ -158,8 +158,6 @@ export async function GET(request: NextRequest) {
       id,
     } = validationResult.data;
 
-    let lessons;
-
     // If specific ID is requested
     if (id) {
       const lesson = await getLessonById(id);
@@ -179,6 +177,8 @@ export async function GET(request: NextRequest) {
         data: lesson,
       });
     }
+
+    let lessons;
 
     // Filter by customer ID
     if (customerId) {
@@ -214,10 +214,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: lessons,
     });
-    const { take, skip } = validationResult.data;
-    const lessons = await getAllLessons(take, skip);
-
-    return NextResponse.json({ success: true, data: lessons });
   } catch (error) {
     console.error("GET /api/lessons error:", error);
     return NextResponse.json(
@@ -269,19 +265,6 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 },
     );
-
-    const data = validation.data;
-
-    const lesson = await createLesson({
-      date: new Date(data.date),
-      desc: data.desc,
-      status: data.status,
-      monitor: { connect: { id: data.monitorId } },
-      customer: { connect: { id: data.customerId } },
-      horse: { connect: { id: data.horseId } },
-    });
-
-    return NextResponse.json({ success: true, data: lesson }, { status: 201 });
   } catch (error) {
     console.error("POST /api/lessons error:", error);
     return NextResponse.json(

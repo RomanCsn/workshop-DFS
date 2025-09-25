@@ -52,9 +52,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("ownerId");
 
-    // If no ownerId is provided, return all horses
+    // If no ownerId is provided, return all horses with owner information
     if (!ownerId) {
-      const horses = await prisma.horse.findMany();
+      const horses = await prisma.horse.findMany({
+        include: {
+          owner: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            }
+          }
+        }
+      });
       return NextResponse.json({
         success: true,
         data: horses,
@@ -73,6 +84,16 @@ export async function GET(request: NextRequest) {
       where: {
         ownerId: zod.data.ownerId,
       },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          }
+        }
+      }
     });
     return NextResponse.json({
       success: true,

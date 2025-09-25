@@ -6,8 +6,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-export function Calendar01() {
-  const [date, setDate] = React.useState<Date>(new Date(2025, 8, 24)) // 24 septembre 2025
+interface Calendar01Props {
+  onDateSelect?: (date: Date) => void
+  selectedDate?: Date | null
+}
+
+export function Calendar01({ onDateSelect, selectedDate }: Calendar01Props) {
+  const [date, setDate] = React.useState<Date>(selectedDate || new Date(2025, 8, 24)) // 24 septembre 2025
   const [currentMonth, setCurrentMonth] = React.useState<Date>(new Date(2025, 8, 1))
 
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
@@ -32,7 +37,15 @@ export function Calendar01() {
   const selectDate = (day: number) => {
     const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     setDate(newDate)
+    onDateSelect?.(newDate)
   }
+
+  React.useEffect(() => {
+    if (selectedDate) {
+      setDate(selectedDate)
+      setCurrentMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
+    }
+  }, [selectedDate])
 
   const isToday = (day: number) => {
     const today = new Date()

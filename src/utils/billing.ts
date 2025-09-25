@@ -136,3 +136,12 @@ export async function getBillingsByDateRange(
     throw new Error("Failed to retrieve billings by date range.");
   }
 }
+
+export async function getBillingCount(): Promise<number> {
+  try {
+    return await prisma.billing.count();
+  } catch (err) {
+    console.error("getBillingCount error:", err);
+    throw new Error("Failed to get billing count.");
+  }
+}
