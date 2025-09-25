@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 
 export default async function Page() {
   const session = await getCurrentUser();
-  const userId = session?.id ?? "User not found";
+  const userId = session?.id ?? "";
   return (
     <Dashboard user={session}>
       <AllBillings userId={userId} />

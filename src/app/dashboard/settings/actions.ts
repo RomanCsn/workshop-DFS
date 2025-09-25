@@ -10,16 +10,16 @@ import type { PasswordActionState } from "./contracts";
 
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Enter your current password."),
+    currentPassword: z.string().min(1, "Saisissez votre mot de passe actuel."),
     newPassword: z
       .string()
-      .min(8, "New password must be at least 8 characters long."),
-    confirmPassword: z.string().min(1, "Confirm your new password."),
+      .min(8, "Le nouveau mot de passe doit contenir au moins 8 caracteres."),
+    confirmPassword: z.string().min(1, "Confirmez votre nouveau mot de passe."),
     revokeOtherSessions: z.boolean().optional(),
   })
   .refine((values) => values.newPassword === values.confirmPassword, {
     path: ["confirmPassword"],
-    message: "Passwords do not match.",
+    message: "Les mots de passe ne correspondent pas.",
   });
 
 export async function changePasswordAction(
@@ -37,7 +37,7 @@ export async function changePasswordAction(
     const { fieldErrors } = parsed.error.flatten();
     return {
       status: "error",
-      message: "Please review the highlighted fields.",
+      message: "Veuillez verifier les champs surlignes.",
       fieldErrors: {
         currentPassword: fieldErrors.currentPassword?.[0],
         newPassword: fieldErrors.newPassword?.[0],
@@ -64,7 +64,7 @@ export async function changePasswordAction(
 
     return {
       status: "success",
-      message: "Password updated successfully.",
+      message: "Mot de passe mis a jour avec succes.",
     };
   } catch (error) {
     console.error("changePasswordAction", error);
@@ -72,7 +72,7 @@ export async function changePasswordAction(
     return {
       status: "error",
       message:
-        "Unable to update password. Double-check your details and try again.",
+        "Impossible de mettre a jour le mot de passe. Verifiez vos informations et reessayez.",
     };
   }
 }
@@ -88,7 +88,7 @@ export async function revokeSessionAction(
   if (!token) {
     return {
       status: "error",
-      message: "Missing session token.",
+      message: "Jeton de session manquant.",
     };
   }
 
@@ -104,14 +104,14 @@ export async function revokeSessionAction(
 
     return {
       status: "success",
-      message: "Session revoked.",
+      message: "Session revoquee.",
     };
   } catch (error) {
     console.error("revokeSessionAction", error);
 
     return {
       status: "error",
-      message: "Failed to revoke the selected session.",
+      message: "Echec de la revocation de la session selectionnee.",
     };
   }
 }
@@ -128,14 +128,14 @@ export async function revokeOtherSessionsAction(): Promise<SimpleActionResponse>
 
     return {
       status: "success",
-      message: "All other sessions have been signed out.",
+      message: "Toutes les autres sessions ont ete deconnectees.",
     };
   } catch (error) {
     console.error("revokeOtherSessionsAction", error);
 
     return {
       status: "error",
-      message: "Unable to revoke sessions right now. Please try again shortly.",
+      message: "Impossible de revoquer les sessions pour le moment. Merci de reessayer bientot.",
     };
   }
 }

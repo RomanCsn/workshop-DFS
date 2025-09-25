@@ -51,9 +51,9 @@ const emptyValues: LessonsFormValues = {
 };
 
 const statusOptions: Array<{ value: LessonsFormValues["status"]; label: string }> = [
-  { value: "PENDING", label: "Pending" },
-  { value: "IN_PROGRESS", label: "In progress" },
-  { value: "FINISHED", label: "Finished" },
+  { value: "PENDING", label: "En attente" },
+  { value: "IN_PROGRESS", label: "En cours" },
+  { value: "FINISHED", label: "Terminee" },
 ];
 
 const extractApiError = async (response: Response) => {
@@ -64,14 +64,14 @@ const extractApiError = async (response: Response) => {
   } catch {
     // Ignore JSON parse errors and fall back to status text
   }
-  return response.statusText || "Request failed";
+  return response.statusText || "Echec de la requete";
 };
 
 const formatUserLabel = (user: UserOption) => {
   const names = [user.firstName, user.lastName].filter(Boolean).join(" ");
   if (names) return names;
   if (user.email) return user.email;
-  return `User ${user.id.slice(0, 8)}`;
+  return `Utilisateur ${user.id.slice(0, 8)}`;
 };
 
 export function LessonsForm({ onSubmit }: LessonsFormProps) {
@@ -99,7 +99,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           cache: "no-store",
         });
         if (!response.ok) {
-          throw new Error(`Unable to load horses (status ${response.status})`);
+          throw new Error(`Impossible de charger les chevaux (statut ${response.status})`);
         }
         const payload = await response.json();
         const list = Array.isArray(payload?.data) ? payload.data : [];
@@ -108,7 +108,9 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
       } catch (error) {
         if (controller.signal.aborted) return;
         const message =
-          error instanceof Error ? error.message : "Failed to load horses.";
+          error instanceof Error
+            ? error.message
+            : "Echec du chargement des chevaux.";
         setHorseError(message);
         setHorses([]);
       } finally {
@@ -140,11 +142,11 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
         ]);
 
         if (!monitorsResponse.ok) {
-          throw new Error(`Unable to load monitors (status ${monitorsResponse.status})`);
+          throw new Error(`Impossible de charger les moniteurs (statut ${monitorsResponse.status})`);
         }
 
         if (!customersResponse.ok) {
-          throw new Error(`Unable to load customers (status ${customersResponse.status})`);
+          throw new Error(`Impossible de charger les clients (statut ${customersResponse.status})`);
         }
 
         const monitorsPayload = await monitorsResponse.json();
@@ -161,7 +163,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
         const message =
           error instanceof Error
             ? error.message
-            : "Failed to load users.";
+            : "Echec du chargement des utilisateurs.";
         setUserError(message);
         setMonitorOptions([]);
         setCustomerOptions([]);
@@ -192,33 +194,33 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
     setErrorMessage(null);
 
     if (!values.horseId) {
-      setErrorMessage("Please select a horse for this lesson.");
+      setErrorMessage("Veuillez selectionner un cheval pour cette lecon.");
       setIsSubmitting(false);
       return;
     }
 
     if (!values.monitorId) {
-      setErrorMessage("Please select a monitor for this lesson.");
+      setErrorMessage("Veuillez selectionner un moniteur pour cette lecon.");
       setIsSubmitting(false);
       return;
     }
 
     if (!values.customerId) {
-      setErrorMessage("Please select a customer for this lesson.");
+      setErrorMessage("Veuillez selectionner un client pour cette lecon.");
       setIsSubmitting(false);
       return;
     }
 
     const parsedDate = new Date(values.date);
     if (!values.date || Number.isNaN(parsedDate.getTime())) {
-      setErrorMessage("Please provide a valid lesson date.");
+      setErrorMessage("Veuillez fournir une date de lecon valide.");
       setIsSubmitting(false);
       return;
     }
 
     const amountValue = values.amount.trim() ? Number(values.amount) : 0;
     if (Number.isNaN(amountValue) || amountValue < 0) {
-      setErrorMessage("Please provide a valid, positive amount.");
+      setErrorMessage("Veuillez indiquer un montant valide et positif.");
       setIsSubmitting(false);
       return;
     }
@@ -247,7 +249,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
       const lessonId: string | undefined = lessonResult?.data?.id;
 
       if (!lessonId) {
-        throw new Error("Lesson created but missing returned identifier.");
+        throw new Error("Lecon creee mais identifiant manquant.");
       }
 
       const serviceResponse = await fetch("/api/services", {
@@ -264,17 +266,19 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
       if (!serviceResponse.ok) {
         const errorText = await extractApiError(serviceResponse);
         await fetch(`/api/lessons?id=${lessonId}`, { method: "DELETE" });
-        throw new Error(`Billing creation failed: ${errorText}`);
+        throw new Error(`Creation de la facturation impossible : ${errorText}`);
       }
 
       onSubmit?.(values);
       setValues(emptyValues);
-      setSuccessMessage("Lesson created successfully.");
+      setSuccessMessage("Lecon creee avec succes.");
       router.push("/lessons");
       router.refresh();
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Failed to create the lesson.";
+        error instanceof Error
+          ? error.message
+          : "Echec de la creation de la lecon.";
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -285,7 +289,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="date">Date &amp; time</Label>
+          <Label htmlFor="date">Date et heure</Label>
           <Input
             id="date"
             name="date"
@@ -297,7 +301,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status">Statut</Label>
           <Select
             value={values.status}
             onValueChange={(value) => {
@@ -308,7 +312,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
             disabled={isSubmitting}
           >
             <SelectTrigger id="status">
-              <SelectValue placeholder="Select a status" />
+              <SelectValue placeholder="Selectionnez un statut" />
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (
@@ -320,7 +324,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           </Select>
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="monitorId">Monitor</Label>
+          <Label htmlFor="monitorId">Moniteur</Label>
           <Select
             value={values.monitorId}
             onValueChange={(value) => {
@@ -334,10 +338,10 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
               <SelectValue
                 placeholder={
                   userLoading
-                    ? "Loading monitors…"
+                    ? "Chargement des moniteurs..."
                     : monitorOptions.length === 0
-                      ? "No monitors available"
-                      : "Select a monitor"
+                      ? "Aucun moniteur disponible"
+                      : "Selectionnez un moniteur"
                 }
               />
             </SelectTrigger>
@@ -356,12 +360,12 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           ) : null}
           {!userError && !userLoading && monitorOptions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Add a monitor user before scheduling lessons.
+              Ajoutez un moniteur avant de planifier des lecons.
             </p>
           ) : null}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="customerId">Customer</Label>
+          <Label htmlFor="customerId">Client</Label>
           <Select
             value={values.customerId}
             onValueChange={(value) => {
@@ -375,10 +379,10 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
               <SelectValue
                 placeholder={
                   userLoading
-                    ? "Loading customers…"
+                    ? "Chargement des clients..."
                     : customerOptions.length === 0
-                      ? "No customers available"
-                      : "Select a customer"
+                      ? "Aucun client disponible"
+                      : "Selectionnez un client"
                 }
               />
             </SelectTrigger>
@@ -392,12 +396,12 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           </Select>
           {!userError && !userLoading && customerOptions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Add a customer user before scheduling lessons.
+              Ajoutez un client avant de planifier des lecons.
             </p>
           ) : null}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="horseId">Horse</Label>
+          <Label htmlFor="horseId">Cheval</Label>
           <Select
             value={values.horseId}
             onValueChange={(value) => {
@@ -411,17 +415,17 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
               <SelectValue
                 placeholder={
                   horseLoading
-                    ? "Loading horses…"
+                    ? "Chargement des chevaux..."
                     : horses.length === 0
-                      ? "No horses available"
-                      : "Select a horse"
+                      ? "Aucun cheval disponible"
+                      : "Selectionnez un cheval"
                 }
               />
             </SelectTrigger>
             <SelectContent>
               {horses.map((horse) => (
                 <SelectItem key={horse.id} value={horse.id}>
-                  {horse.name ?? `Horse ${horse.id.slice(0, 8)}`}
+                  {horse.name ?? `Cheval ${horse.id.slice(0, 8)}`}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -433,12 +437,12 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
           ) : null}
           {!horseError && !horseLoading && horses.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              You need to add a horse before creating a lesson.
+              Ajoutez un cheval avant de creer une lecon.
             </p>
           ) : null}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="amount">Amount (optional)</Label>
+          <Label htmlFor="amount">Montant (optionnel)</Label>
           <Input
             id="amount"
             name="amount"
@@ -457,7 +461,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
         <textarea
           id="desc"
           name="desc"
-          placeholder="Lesson focus, rider objectives, additional notes…"
+          placeholder="Objectif de la lecon, objectifs du cavalier, notes supplementaires..."
           value={values.desc}
           onChange={handleChange("desc")}
           required
@@ -482,7 +486,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
             customerOptions.length === 0
           }
         >
-          {isSubmitting ? "Saving…" : "Save lesson"}
+          {isSubmitting ? "Enregistrement..." : "Enregistrer la lecon"}
         </Button>
         {successMessage ? (
           <span className="text-sm text-muted-foreground">{successMessage}</span>

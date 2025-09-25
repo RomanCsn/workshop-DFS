@@ -54,7 +54,7 @@ async function fetchHorses(ownerId: string): Promise<HorseApiResponse[] | null> 
 
     return payload.data;
   } catch (error) {
-    console.error("Failed to fetch horses", error);
+    console.error("Impossible de recuperer les chevaux", error);
     return null;
   }
 }
@@ -78,33 +78,33 @@ export default async function HorsesPage() {
       <div className="space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">Horses</h1>
+            <h1 className="text-2xl font-semibold">Chevaux</h1>
             <p className="text-sm text-muted-foreground">
-              Keep an eye on the horses under your care.
+              Gardez un oeil sur les chevaux dont vous avez la charge.
             </p>
           </div>
           {isOwner ? (
             <Button asChild>
-              <Link href="/dashboard/horses/create">Add horse</Link>
+              <Link href="/dashboard/horses/create">Ajouter un cheval</Link>
             </Button>
           ) : null}
         </div>
 
         {!user ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Sign in to view your horses.
+            Connectez-vous pour voir vos chevaux.
           </div>
         ) : !isOwner ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Horses are only available to stable owners.
+            Les chevaux sont reserves aux proprietaires d'ecurie.
           </div>
         ) : horses === null ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            We couldn&apos;t load your horses right now. Please try again later.
+            Impossible de charger vos chevaux pour le moment. Merci de reessayer plus tard.
           </div>
         ) : horses.length === 0 ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            You don&apos;t have any horses yet. Create one to get started.
+            Vous n'avez pas encore de cheval. Creez-en un pour commencer.
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -116,7 +116,7 @@ export default async function HorsesPage() {
                   <CardHeader className="space-y-3">
                     <div>
                       <CardTitle className="text-xl font-semibold">
-                        {horse.name ?? "Unnamed horse"}
+                        {horse.name ?? "Cheval sans nom"}
                       </CardTitle>
                       <CardDescription className="truncate">
                         {formatText(horse.discipline)}
@@ -124,30 +124,30 @@ export default async function HorsesPage() {
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                       <span className="rounded-full bg-muted px-2 py-1">
-                        Color: {formatText(horse.color)}
+                        Couleur : {formatText(horse.color)}
                       </span>
                       <span className="rounded-full bg-muted px-2 py-1">
-                        Age: {formatMetric(horse.ageYears, "yrs")}
+                        Age : {formatMetric(horse.ageYears, "ans")}
                       </span>
                       <span className="rounded-full bg-muted px-2 py-1">
-                        Height: {formatMetric(horse.heightCm, "cm")}
+                        Taille : {formatMetric(horse.heightCm, "cm")}
                       </span>
                       <span className="rounded-full bg-muted px-2 py-1">
-                        Weight: {formatMetric(horse.weightKg, "kg")}
+                        Poids : {formatMetric(horse.weightKg, "kg")}
                       </span>
                     </div>
                   </CardHeader>
                   <CardContent className="flex-1 text-sm text-muted-foreground">
                     <p className="line-clamp-3 leading-relaxed">
-                      {preview !== "—" ? preview : "No description yet."}
+                      {preview !== "—" ? preview : "Pas encore de description."}
                     </p>
                   </CardContent>
                   <CardFooter className="flex flex-wrap gap-3">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/dashboard/horses/${horse.id}`}>View</Link>
+                      <Link href={`/dashboard/horses/${horse.id}`}>Voir</Link>
                     </Button>
                     <Button asChild size="sm">
-                      <Link href={`/dashboard/horses/${horse.id}/edit`}>Edit</Link>
+                      <Link href={`/dashboard/horses/${horse.id}/edit`}>Modifier</Link>
                     </Button>
                   </CardFooter>
                 </Card>

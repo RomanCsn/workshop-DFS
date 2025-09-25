@@ -41,10 +41,10 @@ const parseOptionalUuid = (message: string) =>
 
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
-    message: "take must be between 1 and 1000",
+    message: "take doit etre compris entre 1 et 1000",
   }),
   skip: parseQueryNumber(0).refine((n) => n >= 0, {
-    message: "skip must be >= 0",
+    message: "skip doit etre >= 0",
   }),
   includeServices: z.preprocess((val) => {
     if (val === null || val === undefined || val === "") return false;
@@ -52,7 +52,7 @@ const QueryParamsSchema = z.object({
   }, z.boolean().default(false)),
   startDate: parseQueryDate,
   endDate: parseQueryDate,
-  id: z.string().uuid('id must be a valid UUID').optional(),
+  id: z.string().uuid('id doit etre un UUID valide').optional(),
   userId: z.string().min(1).optional(),
 });
 
@@ -64,11 +64,11 @@ const CreateBillingSchema = z.object({
       return isNaN(date.getTime()) ? val : date;
     }
     return val;
-  }, z.date("date must be a valid date")),
+  }, z.date("date doit etre une date valide")),
 });
 
 const UpdateBillingSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
   date: z
     .preprocess((val) => {
       if (typeof val === "string") {
@@ -76,12 +76,12 @@ const UpdateBillingSchema = z.object({
         return isNaN(date.getTime()) ? val : date;
       }
       return val;
-    }, z.date("date must be a valid date"))
+    }, z.date("date doit etre une date valide"))
     .optional(),
 });
 
 const DeleteBillingSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
 });
 
 // GET /api/billing - Get billings with various filters
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid query parameters",
+          error: "Parametres de requete invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: "Billing not found",
+            error: "Facture introuvable",
           },
           { status: 404 },
         );
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: "startDate must be before endDate",
+            error: "startDate doit preceder endDate",
           },
           { status: 400 },
         );
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -222,7 +222,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -241,7 +241,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -260,7 +260,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid or missing ID",
+          error: "Identifiant invalide ou manquant",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -273,14 +273,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: billing,
-      message: "Billing deleted successfully",
+      message: "Facture supprimee avec succes",
     });
   } catch (error) {
     console.error("DELETE /api/billing error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );

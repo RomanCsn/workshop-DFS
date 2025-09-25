@@ -16,11 +16,11 @@ export default function ClientSideFetch() {
       });
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Chargement...</p>;
 
   return (
     <div>
-      <h1>Data from API</h1>
+      <h1>Donnees de l'API</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );

@@ -27,16 +27,17 @@ export function PasswordCard() {
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <CardTitle>Update password</CardTitle>
+        <CardTitle>Modifier le mot de passe</CardTitle>
         <CardDescription>
-          Keep your account secure with a fresh password. Signing out of other
-          sessions is optional but recommended when you change it.
+          Renforcez la securite de votre compte avec un nouveau mot de passe. La
+          deconnexion des autres sessions est facultative mais recommandee apres
+          une modification.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="grid gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="currentPassword">Current password</Label>
+            <Label htmlFor="currentPassword">Mot de passe actuel</Label>
             <Input
               id="currentPassword"
               name="currentPassword"
@@ -52,7 +53,7 @@ export function PasswordCard() {
           </div>
           <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="newPassword">New password</Label>
+              <Label htmlFor="newPassword">Nouveau mot de passe</Label>
               <Input
                 id="newPassword"
                 name="newPassword"
@@ -67,7 +68,7 @@ export function PasswordCard() {
               ) : null}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword">Confirmez le mot de passe</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -89,7 +90,7 @@ export function PasswordCard() {
               className="border-input focus-visible:ring-ring/50 h-4 w-4 rounded border shadow-sm transition focus-visible:outline-none focus-visible:ring-[3px]"
             />
             <span className="text-muted-foreground">
-              Sign out of other devices after changing my password
+              Me deconnecter des autres appareils apres avoir change mon mot de passe
             </span>
           </label>
           <div className="flex items-center justify-between gap-4">
@@ -101,7 +102,7 @@ export function PasswordCard() {
               </p>
             ) : (
               <span className="text-sm text-muted-foreground">
-                Use at least 8 characters with a mix of numbers and symbols.
+                Utilisez au moins 8 caracteres avec un melange de chiffres et de symboles.
               </span>
             )}
             <SubmitButton status={state.status} />
@@ -117,7 +118,7 @@ function SubmitButton({ status }: { status: PasswordActionState["status"] }) {
 
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving…" : status === "success" ? "Saved" : "Save changes"}
+      {pending ? "Enregistrement..." : status === "success" ? "Enregistre" : "Enregistrer"}
     </Button>
   );
 }

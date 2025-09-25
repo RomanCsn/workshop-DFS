@@ -56,7 +56,7 @@ async function fetchHorse(ownerId: string, horseId: string) {
 
     return payload.data.find((entry) => entry.id === horseId) ?? null;
   } catch (error) {
-    console.error("Failed to fetch horse", error);
+    console.error("Impossible de recuperer le cheval", error);
     return null;
   }
 }
@@ -79,42 +79,42 @@ export default async function HorseDetailPage({ params }: HorseDetailPageProps) 
     <Dashboard user={user}>
       <div className="space-y-6">
         <Button asChild variant="outline">
-          <Link href="/dashboard/horses">Back to horses</Link>
+          <Link href="/dashboard/horses">Retour aux chevaux</Link>
         </Button>
 
         {!user ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Sign in to view horse details.
+            Connectez-vous pour voir les details du cheval.
           </div>
         ) : !isOwner ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Horse details are only available to stable owners.
+            Les details des chevaux sont reserves aux proprietaires d'ecurie.
           </div>
         ) : !horse ? (
           <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            We couldn&apos;t find that horse. Try returning to the list and selecting another one.
+            Ce cheval est introuvable. Revenez a la liste et selectionnez-en un autre.
           </div>
         ) : (
           <Card className="border-muted-foreground/10 shadow-md">
             <CardHeader className="space-y-3">
               <div>
                 <CardTitle className="text-3xl font-semibold">
-                  {horse.name ?? "Unnamed horse"}
+                  {horse.name ?? "Cheval sans nom"}
                 </CardTitle>
                 <CardDescription>{formatText(horse.discipline)}</CardDescription>
               </div>
               <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="rounded-full bg-muted px-3 py-1">
-                  Color: {formatText(horse.color)}
+                  Couleur : {formatText(horse.color)}
                 </span>
                 <span className="rounded-full bg-muted px-3 py-1">
-                  Age: {formatMetric(horse.ageYears, "yrs")}
+                  Age : {formatMetric(horse.ageYears, "ans")}
                 </span>
                 <span className="rounded-full bg-muted px-3 py-1">
-                  Height: {formatMetric(horse.heightCm, "cm")}
+                  Taille : {formatMetric(horse.heightCm, "cm")}
                 </span>
                 <span className="rounded-full bg-muted px-3 py-1">
-                  Weight: {formatMetric(horse.weightKg, "kg")}
+                  Poids : {formatMetric(horse.weightKg, "kg")}
                 </span>
               </div>
             </CardHeader>
@@ -122,7 +122,7 @@ export default async function HorseDetailPage({ params }: HorseDetailPageProps) 
               {horse.description ? (
                 <div className="space-y-3">
                   <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Stable notes
+                    Notes d'ecurie
                   </span>
                   <p className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4 leading-relaxed text-foreground">
                     {horse.description}
@@ -130,20 +130,20 @@ export default async function HorseDetailPage({ params }: HorseDetailPageProps) 
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 text-center text-muted-foreground">
-                  No description yet. Add one to keep the team aligned.
+                  Pas encore de description. Ajoutez-en une pour informer l'equipe.
                 </div>
               )}
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Owner ID
+                    ID proprietaire
                   </p>
                   <p className="mt-1 font-medium text-foreground">{horse.ownerId}</p>
                 </div>
                 <div className="rounded-lg border border-muted-foreground/20 bg-muted/40 p-4">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Horse ID
+                    ID cheval
                   </p>
                   <p className="mt-1 font-medium text-foreground">{horse.id}</p>
                 </div>
@@ -151,11 +151,11 @@ export default async function HorseDetailPage({ params }: HorseDetailPageProps) 
             </CardContent>
             <CardFooter className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href={`/dashboard/horses/${horse.id}/edit`}>Edit horse</Link>
+                <Link href={`/dashboard/horses/${horse.id}/edit`}>Modifier le cheval</Link>
               </Button>
               <DeleteHorseButton horseId={horse.id} />
               <Button asChild>
-                <Link href="/dashboard/horses">Back to list</Link>
+                <Link href="/dashboard/horses">Retour a la liste</Link>
               </Button>
             </CardFooter>
           </Card>

@@ -38,10 +38,10 @@ const parseQueryDate = z.preprocess((val) => {
 
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
-    message: "take must be between 1 and 1000",
+    message: "take doit etre compris entre 1 et 1000",
   }),
   skip: parseQueryNumber(0).refine((n) => n >= 0, {
-    message: "skip must be >= 0",
+    message: "skip doit etre >= 0",
   }),
   status: z.preprocess(
     (val) => {
@@ -55,15 +55,15 @@ const QueryParamsSchema = z.object({
   customerId: z.preprocess((val) => {
     if (val === null || val === undefined || val === "") return undefined;
     return val;
-  }, z.string().uuid("customerId must be a valid UUID").optional()),
+  }, z.string().uuid("customerId doit etre un UUID valide").optional()),
   monitorId: z.preprocess((val) => {
     if (val === null || val === undefined || val === "") return undefined;
     return val;
-  }, z.string().uuid("monitorId must be a valid UUID").optional()),
+  }, z.string().uuid("monitorId doit etre un UUID valide").optional()),
   id: z.preprocess((val) => {
     if (val === null || val === undefined || val === "") return undefined;
     return val;
-  }, z.string().uuid("id must be a valid UUID").optional()),
+  }, z.string().uuid("id doit etre un UUID valide").optional()),
 });
 
 // Body schemas
@@ -74,19 +74,19 @@ const CreateLessonSchema = z.object({
       return isNaN(date.getTime()) ? val : date;
     }
     return val;
-  }, z.date("date must be a valid date")),
+  }, z.date("date doit etre une date valide")),
   desc: z
     .string()
-    .min(1, "Description is required")
-    .max(1000, "Description must be less than 1000 characters"),
+    .min(1, "La description est obligatoire")
+    .max(1000, "La description doit comporter moins de 1000 caracteres"),
   status: z.enum(["PENDING", "IN_PROGRESS", "FINISHED"]).default("PENDING"),
-  monitorId: z.string().uuid("monitorId must be a valid UUID"),
-  customerId: z.string().uuid("customerId must be a valid UUID"),
-  horseId: z.string().uuid("horseId must be a valid UUID"),
+  monitorId: z.string().uuid("monitorId doit etre un UUID valide"),
+  customerId: z.string().uuid("customerId doit etre un UUID valide"),
+  horseId: z.string().uuid("horseId doit etre un UUID valide"),
 });
 
 const UpdateLessonSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
   date: z
     .preprocess((val) => {
       if (typeof val === "string") {
@@ -94,21 +94,21 @@ const UpdateLessonSchema = z.object({
         return isNaN(date.getTime()) ? val : date;
       }
       return val;
-    }, z.date("date must be a valid date"))
+    }, z.date("date doit etre une date valide"))
     .optional(),
   desc: z
     .string()
-    .min(1, "Description is required")
-    .max(1000, "Description must be less than 1000 characters")
+    .min(1, "La description est obligatoire")
+    .max(1000, "La description doit comporter moins de 1000 caracteres")
     .optional(),
   status: z.enum(["PENDING", "IN_PROGRESS", "FINISHED"]).optional(),
-  monitorId: z.string().uuid("monitorId must be a valid UUID").optional(),
-  customerId: z.string().uuid("customerId must be a valid UUID").optional(),
-  horseId: z.string().uuid("horseId must be a valid UUID").optional(),
+  monitorId: z.string().uuid("monitorId doit etre un UUID valide").optional(),
+  customerId: z.string().uuid("customerId doit etre un UUID valide").optional(),
+  horseId: z.string().uuid("horseId doit etre un UUID valide").optional(),
 });
 
 const UpdateStatusSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
   status: z.enum(["PENDING", "IN_PROGRESS", "FINISHED"]),
 });
 
@@ -116,7 +116,7 @@ const DeleteLessonSchema = z.object({
   id: z.preprocess((val) => {
     if (val === null || val === undefined || val === "") return undefined;
     return val;
-  }, z.string().uuid("id must be a valid UUID")),
+  }, z.string().uuid("id doit etre un UUID valide")),
 });
 
 // GET /api/lessons - Get lessons with various filters
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid query parameters",
+          error: "Parametres de requete invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: "Lesson not found",
+            error: "Lecon introuvable",
           },
           { status: 404 },
         );
@@ -198,7 +198,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: "startDate must be before endDate",
+            error: "startDate doit preceder endDate",
           },
           { status: 400 },
         );
@@ -219,7 +219,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -286,7 +286,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -320,7 +320,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -338,7 +338,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -351,14 +351,14 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: lesson,
-      message: `Lesson status updated to ${status}`,
+      message: `Statut de la lecon mis a jour en ${status}`,
     });
   } catch (error) {
     console.error("PATCH /api/lessons error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -377,7 +377,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid or missing ID",
+          error: "Identifiant invalide ou manquant",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -390,14 +390,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: lesson,
-      message: "Lesson deleted successfully",
+      message: "Lecon supprimee avec succes",
     });
   } catch (error) {
     console.error("DELETE /api/lessons error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );

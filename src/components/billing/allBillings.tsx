@@ -17,9 +17,9 @@ export default function AllBillings({ userId }: { userId: string }) {
       });
   }, [userId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Chargement...</p>;
 
-  if (!userId) return <p>No user found</p>;
+  if (!userId) return <p>Aucun utilisateur trouve</p>;
 
   const rows = (data?.data ?? []).flatMap((billing: any) =>
     (billing.services ?? []).map((svc: any) => ({
@@ -32,15 +32,16 @@ export default function AllBillings({ userId }: { userId: string }) {
 
   return (
     <div>
+      <h1>Toutes les factures pour : {userId}</h1>
       <Table className="w-full">
-        <TableCaption>Billings for current user</TableCaption>
+        <TableCaption>Factures de l'utilisateur courant</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Billing</TableHead>
+            <TableHead>Facture</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Service</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="text-right">Download</TableHead>
+            <TableHead className="text-right">Montant</TableHead>
+            <TableHead className="text-right">Telecharger</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -54,16 +55,21 @@ export default function AllBillings({ userId }: { userId: string }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.open(`/api/billing/pdf?billingId=${encodeURIComponent(row.billingId)}`, '_blank')}
+                  onClick={() =>
+                    window.open(
+                      `/api/billing/pdf?billingId=${encodeURIComponent(row.billingId)}`,
+                      '_blank'
+                    )
+                  }
                 >
-                  Download PDF
+                  Telecharger le PDF
                 </Button>
               </TableCell>
             </TableRow>
           ))}
           {rows.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5}>No billings found</TableCell>
+              <TableCell colSpan={5}>Aucune facture disponible</TableCell>
             </TableRow>
           )}
         </TableBody>

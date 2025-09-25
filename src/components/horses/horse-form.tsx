@@ -95,9 +95,9 @@ function toFormValues(record?: HorseRecord | null): HorseFormValues {
 }
 
 const numberErrorMessages: Record<"ageYears" | "heightCm" | "weightKg", string> = {
-  ageYears: "Age must be a whole number.",
-  heightCm: "Height must be a whole number.",
-  weightKg: "Weight must be a number.",
+  ageYears: "L'age doit etre un nombre entier.",
+  heightCm: "La taille doit etre un nombre entier.",
+  weightKg: "Le poids doit etre un nombre.",
 };
 
 export function HorseForm({
@@ -165,7 +165,7 @@ export function HorseForm({
     const trimmedName = values.name.trim();
     if (!trimmedName) {
       setStatus("error");
-      setError("A horse name is required.");
+      setError("Le nom du cheval est obligatoire.");
       return;
     }
 
@@ -208,7 +208,7 @@ export function HorseForm({
 
       if (!response.ok || !json.success || !json.data) {
         const serverError =
-          json.error || extractServerError(json.errors) || "Failed to save the horse.";
+          json.error || extractServerError(json.errors) || "Impossible d'enregistrer le cheval.";
         throw new Error(serverError);
       }
 
@@ -230,19 +230,19 @@ export function HorseForm({
       console.error(exception);
       setStatus("error");
       setError(
-        exception instanceof Error ? exception.message : "Something went wrong.",
+        exception instanceof Error ? exception.message : "Une erreur est survenue.",
       );
     }
   };
 
   const isSaving = status === "saving";
-  const submitLabel = horseId ? "Update horse" : "Save horse";
+  const submitLabel = horseId ? "Modifier le cheval" : "Enregistrer le cheval";
 
   return (
     <form className="space-y-8" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2 sm:col-span-2">
-          <Label htmlFor="name">Horse name</Label>
+          <Label htmlFor="name">Nom du cheval</Label>
           <Input
             id="name"
             name="name"
@@ -255,7 +255,7 @@ export function HorseForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="color">Color</Label>
+          <Label htmlFor="color">Couleur</Label>
           <Input
             id="color"
             name="color"
@@ -279,7 +279,7 @@ export function HorseForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="ageYears">Age (years)</Label>
+          <Label htmlFor="ageYears">Age (ans)</Label>
           <Input
             id="ageYears"
             name="ageYears"
@@ -293,7 +293,7 @@ export function HorseForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="heightCm">Height (cm)</Label>
+          <Label htmlFor="heightCm">Taille (cm)</Label>
           <Input
             id="heightCm"
             name="heightCm"
@@ -307,7 +307,7 @@ export function HorseForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="weightKg">Weight (kg)</Label>
+          <Label htmlFor="weightKg">Poids (kg)</Label>
           <Input
             id="weightKg"
             name="weightKg"
@@ -326,7 +326,7 @@ export function HorseForm({
           <textarea
             id="description"
             name="description"
-            placeholder="Temperament, care notes, favourite activities..."
+            placeholder="Temperament, soins, activites favorites..."
             value={values.description}
             disabled={isSaving}
             onChange={handleChange("description")}
@@ -337,11 +337,11 @@ export function HorseForm({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
         <Button type="submit" disabled={isSaving}>
-          {isSaving ? "Saving…" : submitLabel}
+          {isSaving ? "Enregistrement..." : submitLabel}
         </Button>
         {status === "success" ? (
           <span className="text-sm text-muted-foreground">
-            Horse saved successfully.
+            Cheval enregistre avec succes.
           </span>
         ) : null}
         {error ? <span className="text-sm text-destructive">{error}</span> : null}

@@ -14,11 +14,11 @@ export function SettingsContent({ session }: SettingsContentProps) {
     <div className="grid max-w-4xl gap-8">
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Account settings
+          Parametres du compte
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base">
-          Manage your password and keep an eye on devices that are signed in to
-          your account.
+          Gerez votre mot de passe et surveillez les appareils connectes a votre
+          compte.
         </p>
       </header>
 
