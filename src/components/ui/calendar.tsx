@@ -6,22 +6,35 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react"
-import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
+import { DayButton, DayPicker, getDefaultClassNames, PropsBase, PropsSingle } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 
-interface Calendar01Props {
-  onDateSelect?: (date: Date) => void
+type CalendarProps = PropsBase & PropsSingle & {
+  buttonVariant?: React.ComponentProps<typeof Button>["variant"]
+  onDateSelect?: (date: Date | undefined) => void
   selectedDate?: Date | null
 }
 
-export function Calendar01({ onDateSelect, selectedDate }: Calendar01Props) {
-  const [date, setDate] = React.useState<Date>(selectedDate || new Date(2025, 8, 24)) // 24 septembre 2025
-  const [currentMonth, setCurrentMonth] = React.useState<Date>(new Date(2025, 8, 1))
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  captionLayout = "label",
+  buttonVariant = "ghost",
+  formatters,
+  components,
+  onDateSelect,
+  selectedDate,
+  mode = "single",
+  ...props
+}: CalendarProps) {
+  const defaultClassNames = getDefaultClassNames()
 
   return (
     <DayPicker
+      mode={mode}
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -30,6 +43,8 @@ export function Calendar01({ onDateSelect, selectedDate }: Calendar01Props) {
         className
       )}
       captionLayout={captionLayout}
+      selected={selectedDate || undefined}
+      onSelect={onDateSelect}
       formatters={{
         formatMonthDropdown: (date) =>
           date.toLocaleString("default", { month: "short" }),
@@ -146,25 +161,6 @@ export function Calendar01({ onDateSelect, selectedDate }: Calendar01Props) {
             )
           }
 
-  const selectDate = (day: number) => {
-    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-    setDate(newDate)
-    onDateSelect?.(newDate)
-  }
-
-  React.useEffect(() => {
-    if (selectedDate) {
-      setDate(selectedDate)
-      setCurrentMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
-    }
-  }, [selectedDate])
-
-  const isToday = (day: number) => {
-    const today = new Date()
-    return today.getDate() === day && 
-           today.getMonth() === currentMonth.getMonth() && 
-           today.getFullYear() === currentMonth.getFullYear()
-  }
           return (
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
           )
