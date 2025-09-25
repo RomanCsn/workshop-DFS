@@ -1,4 +1,6 @@
+import { Home, Dog, Settings, CreditCard } from "lucide-react";
 import { Home, Dog, Settings, Receipt, Paperclip } from "lucide-react";
+
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -16,6 +18,7 @@ const ownerLinks = [
   { title: "Billing", url: "/dashboard/billing", icon: Receipt},
   { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const customerLinks = [
@@ -24,6 +27,7 @@ const customerLinks = [
   { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
   { title: "Billing", url: "/dashboard/billing", icon: Receipt},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const adminLinks =  [
@@ -32,6 +36,7 @@ const adminLinks =  [
   { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
   { title: "Billing", url: "/dashboard/billing", icon: Receipt},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 export default function Dashboard({ children, user }: DashboardProps) {
