@@ -11,19 +11,14 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 
-function Calendar({
-  className,
-  classNames,
-  showOutsideDays = true,
-  captionLayout = "label",
-  buttonVariant = "ghost",
-  formatters,
-  components,
-  ...props
-}: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>["variant"]
-}) {
-  const defaultClassNames = getDefaultClassNames()
+interface Calendar01Props {
+  onDateSelect?: (date: Date) => void
+  selectedDate?: Date | null
+}
+
+export function Calendar01({ onDateSelect, selectedDate }: Calendar01Props) {
+  const [date, setDate] = React.useState<Date>(selectedDate || new Date(2025, 8, 24)) // 24 septembre 2025
+  const [currentMonth, setCurrentMonth] = React.useState<Date>(new Date(2025, 8, 1))
 
   return (
     <DayPicker
@@ -151,6 +146,25 @@ function Calendar({
             )
           }
 
+  const selectDate = (day: number) => {
+    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    setDate(newDate)
+    onDateSelect?.(newDate)
+  }
+
+  React.useEffect(() => {
+    if (selectedDate) {
+      setDate(selectedDate)
+      setCurrentMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
+    }
+  }, [selectedDate])
+
+  const isToday = (day: number) => {
+    const today = new Date()
+    return today.getDate() === day && 
+           today.getMonth() === currentMonth.getMonth() && 
+           today.getFullYear() === currentMonth.getFullYear()
+  }
           return (
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
           )

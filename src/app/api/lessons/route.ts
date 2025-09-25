@@ -158,8 +158,6 @@ export async function GET(request: NextRequest) {
       id,
     } = validationResult.data;
 
-    let lessons;
-
     // If specific ID is requested
     if (id) {
       const lesson = await getLessonById(id);
@@ -179,6 +177,8 @@ export async function GET(request: NextRequest) {
         data: lesson,
       });
     }
+
+    let lessons;
 
     // Filter by customer ID
     if (customerId) {
