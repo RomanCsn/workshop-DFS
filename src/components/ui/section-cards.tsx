@@ -109,24 +109,25 @@ export function SectionCards() {
     )
   }
 
-  const totalCustomersLabel = new Intl.NumberFormat("fr-FR").format(
-    totalCustomers,
+  const totalCustomersLabel = new Intl.NumberFormat("en-US").format(
+    stats.totalCustomers,
   )
-  const lastSixMonthsCustomersLabel = new Intl.NumberFormat("fr-FR").format(
-    lastSixMonthsCustomers,
+  const lastSixMonthsCustomersLabel = new Intl.NumberFormat("en-US").format(
+    stats.lastSixMonthsCustomers,
   )
   const percentageLastSixMonthsLabel = `${
-    percentageLastSixMonths > 0 ? "+" : ""
-  }${percentageLastSixMonths}%`
-  const totalHorsesLabel = new Intl.NumberFormat("fr-FR").format(totalHorses)
+    stats.percentageLastSixMonths > 0 ? "+" : ""
+  }${stats.percentageLastSixMonths}%`
+  const totalHorsesLabel = new Intl.NumberFormat("en-US").format(stats.totalHorses)
+  const totalBillingsLabel = new Intl.NumberFormat("en-US").format(stats.totalBillings)
+
   const isPositiveTrend = stats.percentageLastSixMonths >= 0
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs">
             <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Revenu total</CardDescription>
-
+            <CardDescription>Total Billings</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {totalBillingsLabel}
           </CardTitle>
@@ -134,18 +135,14 @@ export function SectionCards() {
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Tendance haussiere ce mois-ci <IconTrendingUp className="size-4" />
-          </div>
           <div className="text-muted-foreground">
-            Visiteurs sur les 6 derniers mois
-
+            Total invoices in database
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Nouveaux clients (6 mois)</CardDescription>
+          <CardDescription>New Customers (6 months)</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {lastSixMonthsCustomersLabel}
           </CardTitle>
@@ -158,7 +155,7 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {lastSixMonthsCustomersLabel} nouvelles inscriptions
+            {lastSixMonthsCustomersLabel} new signups
             {isPositiveTrend ? (
               <IconTrendingUp className="size-4" />
             ) : (
@@ -166,13 +163,13 @@ export function SectionCards() {
             )}
           </div>
           <div className="text-muted-foreground">
-            {totalCustomersLabel} clients au total
+            {totalCustomersLabel} total customers to date
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Chevaux heberges</CardDescription>
+          <CardDescription>Boarded Horses</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {totalHorsesLabel}
           </CardTitle>
@@ -180,18 +177,17 @@ export function SectionCards() {
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Forte fidelisation <IconTrendingUp className="size-4" />
-          </div>
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Horses boarded this month <IconTrendingUp className="size-4" />
+            </div>
           <div className="text-muted-foreground">
-            {totalHorses} chevaux heberges
-
+            {stats.totalHorses} total horses boarded
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Taux de croissance</CardDescription>
+          <CardDescription>Growth Rate</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             4.5%
           </CardTitle>
@@ -204,9 +200,9 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Progression reguliere des performances <IconTrendingUp className="size-4" />
+            Steady performance increase <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Respecte les objectifs de croissance</div>
+          <div className="text-muted-foreground">Meets growth projections</div>
         </CardFooter>
       </Card>
     </div>

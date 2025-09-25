@@ -1,5 +1,5 @@
-import { Home, Dog, Settings, CreditCard } from "lucide-react";
-import { Home, Dog, Settings, Receipt, Paperclip } from "lucide-react";
+import { Home, Dog, Settings, Receipt, Paperclip, CreditCard } from "lucide-react";
+
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
