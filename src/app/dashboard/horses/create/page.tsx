@@ -15,30 +15,30 @@ export default async function CreateHorsePage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">Add a horse</h1>
+            <h1 className="text-2xl font-semibold">Ajouter un cheval</h1>
             <p className="text-sm text-muted-foreground">
-              Create a new horse profile for your stable.
+              Creez un nouveau profil de cheval pour votre ecurie.
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href="/dashboard/horses">Back to horses</Link>
+            <Link href="/dashboard/horses">Retour aux chevaux</Link>
           </Button>
         </div>
 
         {!user ? (
           <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-            You need to be signed in to add a horse.
+            Vous devez etre connecte pour ajouter un cheval.
           </p>
         ) : !isOwner ? (
           <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-            Only stable owners can create horses.
+            Seuls les proprietaires d'ecurie peuvent creer des chevaux.
           </p>
         ) : (
           <Card className="border-muted-foreground/10 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-xl">Horse profile</CardTitle>
+              <CardTitle className="text-xl">Profil du cheval</CardTitle>
               <CardDescription>
-                Give your horse a name and fill the key details to keep its profile fresh.
+                Donnez un nom a votre cheval et renseignez les informations essentielles pour garder son profil a jour.
               </CardDescription>
             </CardHeader>
             <CardContent>

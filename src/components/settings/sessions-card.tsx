@@ -31,8 +31,8 @@ export async function SessionsCard({ currentSessionToken }: SessionsCardProps) {
       createdAt: session.createdAt.toISOString(),
       updatedAt: session.updatedAt.toISOString(),
       expiresAt: session.expiresAt.toISOString(),
-      ipAddress: session.ipAddress ?? "Unknown location",
-      userAgent: session.userAgent ?? "Unknown device",
+      ipAddress: session.ipAddress ?? "Localisation inconnue",
+      userAgent: session.userAgent ?? "Appareil inconnu",
       isCurrent: session.token === currentSessionToken,
     }));
   } catch (error) {
@@ -42,10 +42,10 @@ export async function SessionsCard({ currentSessionToken }: SessionsCardProps) {
   return (
     <Card className="max-w-3xl">
       <CardHeader>
-        <CardTitle>Active sessions</CardTitle>
+        <CardTitle>Sessions actives</CardTitle>
         <CardDescription>
-          Sign out from devices you no longer use. The list refreshes
-          automatically after each change.
+          Deconnectez les appareils que vous n'utilisez plus. La liste se met a
+          jour automatiquement apres chaque modification.
         </CardDescription>
       </CardHeader>
       <CardContent>

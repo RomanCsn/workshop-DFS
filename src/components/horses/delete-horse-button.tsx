@@ -17,7 +17,7 @@ export function DeleteHorseButton({ horseId, redirectTo = "/dashboard/horses" }:
   const handleDelete = async () => {
     if (isDeleting) return;
 
-    const confirmed = window.confirm("Are you sure you want to delete this horse?");
+    const confirmed = window.confirm("Voulez-vous vraiment supprimer ce cheval ?");
     if (!confirmed) return;
 
     setIsDeleting(true);
@@ -30,21 +30,21 @@ export function DeleteHorseButton({ horseId, redirectTo = "/dashboard/horses" }:
       const payload = (await response.json()) as { success: boolean; error?: string };
 
       if (!response.ok || !payload.success) {
-        throw new Error(payload.error || "Failed to delete the horse.");
+        throw new Error(payload.error || "Impossible de supprimer le cheval.");
       }
 
       router.push(redirectTo);
       router.refresh();
     } catch (error) {
       console.error(error);
-      window.alert("We couldn't delete the horse. Please try again.");
+      window.alert("Suppression impossible. Merci de reessayer.");
       setIsDeleting(false);
     }
   };
 
   return (
     <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-      {isDeleting ? "Deleting…" : "Delete"}
+      {isDeleting ? "Suppression..." : "Supprimer"}
     </Button>
   );
 }

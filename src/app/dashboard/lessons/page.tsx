@@ -13,13 +13,13 @@ export default async function LessonsPage() {
       <div className="space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">Lessons</h1>
+            <h1 className="text-2xl font-semibold">Lecons</h1>
             <p className="text-sm text-muted-foreground">
-              Review your upcoming and past riding lessons.
+              Consultez vos lecons d'equitation passees et a venir.
             </p>
           </div>
           <Button asChild>
-            <Link href="/lessons/create">Add lesson</Link>
+            <Link href="/lessons/create">Ajouter une lecon</Link>
           </Button>
         </div>
         <LessonsList />

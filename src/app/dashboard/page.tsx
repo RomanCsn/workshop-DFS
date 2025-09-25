@@ -5,7 +5,7 @@ export default async function Page() {
 
   return (
     <Dashboard user={{ session }}>
-      <div className="text-2xl font-bold">Welcome to the Dashboard</div>
+      <div className="text-2xl font-bold">Bienvenue sur le tableau de bord</div>
     </Dashboard>
   );
 }

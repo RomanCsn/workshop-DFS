@@ -26,8 +26,8 @@ import {
 type Role = "OWNER" | "CUSTOMER";
 
 const roleHelp: Record<Role, string> = {
-  OWNER: "You have horses or a stud.",
-  CUSTOMER: "You book services.",
+  OWNER: "Vous possedez des chevaux ou une ecurie.",
+  CUSTOMER: "Vous reservez des services.",
 };
 
 export function SignupForm({
@@ -48,7 +48,7 @@ export function SignupForm({
     setSuccess(null);
 
     if (!role) {
-      setError("Please select a role before continuing.");
+      setError("Veuillez selectionner un role avant de continuer.");
       return;
     }
 
@@ -61,12 +61,12 @@ export function SignupForm({
     const password = (data.get("password") || "").toString();
 
     if (!password || password.length < 8) {
-      setError("Password must be at least 8 characters long.");
+      setError("Le mot de passe doit contenir au moins 8 caracteres.");
       return;
     }
 
     if (!firstName || !lastName) {
-      setError("First name and last name are required.");
+      setError("Le prenom et le nom sont obligatoires.");
       return;
     }
 
@@ -85,12 +85,12 @@ export function SignupForm({
 
         if (response.error) {
           setError(
-            response.error.message ?? "Something went wrong. Please try again.",
+            response.error.message ?? "Une erreur est survenue. Merci de reessayer.",
           );
           return;
         }
 
-        setSuccess("Account created! Redirecting you to the dashboard...");
+        setSuccess("Compte cree ! Redirection vers le tableau de bord...");
         formElement.reset();
         setRole("");
         setSubmitted(false);
@@ -101,7 +101,7 @@ export function SignupForm({
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to create account. Please try again.",
+            : "Creation du compte impossible. Merci de reessayer.",
         );
       } finally {
         setIsSubmitting(false);
@@ -113,19 +113,19 @@ export function SignupForm({
 
   const help = role
     ? roleHelp[role as Role]
-    : "Choose the role that best describes you.";
+    : "Choisissez le role qui vous correspond le mieux.";
 
   return (
     <div className={cn("mx-auto w-full max-w-md", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Sign up</CardTitle>
-          <CardDescription>All fields are required.</CardDescription>
+          <CardTitle>Inscription</CardTitle>
+          <CardDescription>Tous les champs sont obligatoires.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName">Prenom</Label>
               <Input
                 id="firstName"
                 name="firstName"
@@ -137,7 +137,7 @@ export function SignupForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName">Nom</Label>
               <Input
                 id="lastName"
                 name="lastName"
@@ -158,17 +158,17 @@ export function SignupForm({
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="role">
-                  <SelectValue placeholder="Select your role" />
+                  <SelectValue placeholder="Selectionnez votre role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="OWNER">Owner</SelectItem>
-                  <SelectItem value="CUSTOMER">Customer</SelectItem>
+                  <SelectItem value="OWNER">Proprietaire</SelectItem>
+                  <SelectItem value="CUSTOMER">Client</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">{help}</p>
               {submitted && !role ? (
                 <p className="text-sm text-destructive" role="alert">
-                  Please select a role.
+                  Veuillez selectionner un role.
                 </p>
               ) : null}
             </div>
@@ -187,7 +187,7 @@ export function SignupForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Telephone</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -200,7 +200,7 @@ export function SignupForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Mot de passe</Label>
               <Input
                 id="password"
                 name="password"
@@ -211,7 +211,7 @@ export function SignupForm({
                 disabled={isSubmitting}
               />
               <p className="text-xs text-muted-foreground">
-                Use at least 8 characters to keep your account safe.
+                Utilisez au moins 8 caracteres pour securiser votre compte.
               </p>
             </div>
 
@@ -228,13 +228,13 @@ export function SignupForm({
             ) : null}
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Creating account..." : "Create account"}
+              {isSubmitting ? "Creation du compte..." : "Creer un compte"}
             </Button>
 
             <p className="text-center text-sm">
-              Already have an account?{" "}
+              Vous avez deja un compte ?{" "}
               <a href="/login" className="underline underline-offset-4">
-                Log in
+                Connexion
               </a>
             </p>
           </form>

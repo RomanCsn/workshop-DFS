@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid query parameters",
+          error: "Parametres de requete invalides",
           details: validation.error.format(),
         },
         { status: 400 },

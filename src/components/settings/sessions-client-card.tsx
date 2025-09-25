@@ -77,7 +77,7 @@ export function SessionsClientCard({ sessions }: SessionsClientCardProps) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm text-muted-foreground">
-            You&apos;re currently active on {sessions.length} session
+            Vous etes actuellement connecte sur {sessions.length} session
             {sessions.length === 1 ? "" : "s"}.
           </p>
           {feedback ? (
@@ -95,15 +95,15 @@ export function SessionsClientCard({ sessions }: SessionsClientCardProps) {
           disabled={isPending}
         >
           {isPending && activeToken === "__all__"
-            ? "Signing out…"
-            : "Sign out other sessions"}
+            ? "Deconnexion..."
+            : "Deconnecter les autres sessions"}
         </Button>
       </div>
 
       <div className="grid gap-3">
         {sortedSessions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No active sessions found.
+            Aucune session active.
           </p>
         ) : (
           sortedSessions.map((session) => (
@@ -115,15 +115,15 @@ export function SessionsClientCard({ sessions }: SessionsClientCardProps) {
                 <div className="space-y-1">
                   <p className="text-sm font-medium">
                     {session.isCurrent
-                      ? "This device"
-                      : session.userAgent || "Unknown device"}
+                      ? "Cet appareil"
+                      : session.userAgent || "Appareil inconnu"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {session.ipAddress || "No IP detected"} · Last active{" "}
+                    {session.ipAddress || "Adresse IP indisponible"} · Derniere activite{" "}
                     {formatRelative(session.updatedAt)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Started {formatDate(session.createdAt)} · Expires{" "}
+                    Debut {formatDate(session.createdAt)} · Expire le{" "}
                     {formatDate(session.expiresAt)}
                   </p>
                 </div>
@@ -136,8 +136,8 @@ export function SessionsClientCard({ sessions }: SessionsClientCardProps) {
                   {session.isCurrent
                     ? "Active"
                     : isPending && activeToken === session.token
-                      ? "Removing…"
-                      : "Sign out"}
+                      ? "Suppression..."
+                      : "Deconnecter"}
                 </Button>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function SessionsClientCard({ sessions }: SessionsClientCardProps) {
 
 function formatRelative(value: string) {
   try {
-    const formatter = new Intl.RelativeTimeFormat(undefined, {
+    const formatter = new Intl.RelativeTimeFormat("fr-FR", {
       style: "short",
     });
     const target = new Date(value);
@@ -177,7 +177,7 @@ function formatRelative(value: string) {
 
 function formatDate(value: string) {
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat("fr-FR", {
       month: "short",
       day: "numeric",
       hour: "numeric",

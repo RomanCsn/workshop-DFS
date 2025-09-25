@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/session";
 
 export default async function Page() {
   const session = await getCurrentUser();
-
+  const userId = session?.id ?? "";
   return (
     <Dashboard user={session}>
       {session?.role === 'ADMIN' ? (
@@ -16,6 +16,5 @@ export default async function Page() {
     </Dashboard>
   );
 }
-
 //dashboard route
 //Route Sidebar

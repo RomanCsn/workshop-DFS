@@ -26,28 +26,9 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-//GET ALL HORSES
-
-export async function GET_ALL(request: NextRequest) {
-  try {
-    const horses = await prisma.horse.findMany();
-    return NextResponse.json({
-      success: true,
-      data: horses,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
-      },
-      { status: 500 },
-    );
-  }
-}
-
-//GET ALL HORSES BY OWNER ID OR ALL HORSES
-const ownerQuerySchema = z.object({ ownerId: z.string().min(1, "Owner identifier is required.") });
+const ownerQuerySchema = z.object({
+  ownerId: z.string().min(1, "L'identifiant proprietaire est requis."),
+});
 
 const sanitizeString = (value: unknown, max: number) => {
   if (typeof value !== "string") return undefined;
@@ -59,7 +40,9 @@ const sanitizeString = (value: unknown, max: number) => {
 const sanitizeInteger = (value: unknown, min: number, max: number) => {
   if (value === null || value === undefined || value === "") return undefined;
   const numericValue = typeof value === "string" ? Number(value) : value;
-  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) return undefined;
+  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) {
+    return undefined;
+  }
   const intValue = Math.trunc(numericValue);
   if (intValue < min || intValue > max) return undefined;
   return intValue;
@@ -68,23 +51,26 @@ const sanitizeInteger = (value: unknown, min: number, max: number) => {
 const sanitizeFloat = (value: unknown, min: number, max: number) => {
   if (value === null || value === undefined || value === "") return undefined;
   const numericValue = typeof value === "string" ? Number(value) : value;
-  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) return undefined;
+  if (typeof numericValue !== "number" || !Number.isFinite(numericValue)) {
+    return undefined;
+  }
   if (numericValue < min || numericValue > max) return undefined;
   return numericValue;
 };
 
 const buildCreatePayload = (raw: unknown) => {
-  const body = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+  const body =
+    typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
 
   const ownerId = typeof body.ownerId === "string" ? body.ownerId.trim() : "";
   const name = typeof body.name === "string" ? body.name.trim() : "";
 
   if (!ownerId) {
-    return { ok: false, error: "Owner identifier is missing." } as const;
+    return { ok: false, error: "Identifiant proprietaire manquant." } as const;
   }
 
   if (!name) {
-    return { ok: false, error: "Horse name is required." } as const;
+    return { ok: false, error: "Le nom du cheval est obligatoire." } as const;
   }
 
   const data = {
@@ -106,7 +92,8 @@ const buildCreatePayload = (raw: unknown) => {
 };
 
 const buildUpdatePayload = (raw: unknown) => {
-  const body = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+  const body =
+    typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
 
   const data = {
     ownerId: sanitizeString(body.ownerId, 100),
@@ -124,12 +111,10 @@ const buildUpdatePayload = (raw: unknown) => {
   ) as Record<string, string | number>;
 };
 
-//GET ALL HORSES BY OWNER ID
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("ownerId");
-    const parsed = ownerQuerySchema.safeParse({ ownerId });
 
     // If no ownerId is provided, return all horses with owner information
     if (!ownerId) {
@@ -151,12 +136,15 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const zod = z.object({ ownerId: z.string().min(1) }).safeParse({ ownerId });
-    if (!zod.success) {
+    const parsed = ownerQuerySchema.safeParse({ ownerId });
+
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues.at(0);
       return NextResponse.json(
         {
           success: false,
-          error: firstIssue?.message ?? "Owner identifier is required.",
+          error:
+            firstIssue?.message ?? "L'identifiant proprietaire est requis.",
         },
         { status: 400 },
       );
@@ -177,22 +165,23 @@ export async function GET(request: NextRequest) {
         }
       }
     });
+
     return NextResponse.json({
       success: true,
       data: horses,
     });
   } catch (error) {
+    console.error("Impossible de recuperer les chevaux", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
   }
 }
 
-//PUT CREATE A HORSE
 export async function PUT(request: NextRequest) {
   try {
     const json = await request.json();
@@ -213,17 +202,17 @@ export async function PUT(request: NextRequest) {
       data: horse,
     });
   } catch (error) {
+    console.error("Erreur lors de la creation d'un cheval", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
   }
 }
 
-//PATCH (update) A HORSE
 export async function PATCH(request: NextRequest) {
   try {
     const json = await request.json();
@@ -231,7 +220,11 @@ export async function PATCH(request: NextRequest) {
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: "Horse identifier is missing.", received: json },
+        {
+          success: false,
+          error: "Identifiant du cheval manquant.",
+          received: json,
+        },
         { status: 400 },
       );
     }
@@ -240,7 +233,7 @@ export async function PATCH(request: NextRequest) {
 
     if (!Object.keys(updateData).length) {
       return NextResponse.json(
-        { success: false, error: "No changes provided.", received: json },
+        { success: false, error: "Aucune modification fournie.", received: json },
         { status: 400 },
       );
     }
@@ -254,17 +247,17 @@ export async function PATCH(request: NextRequest) {
       data: horse,
     });
   } catch (error) {
+    console.error("Erreur lors de la mise a jour d'un cheval", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
   }
 }
 
-//DELETE A HORSE
 export async function DELETE(request: NextRequest) {
   try {
     const json = await request.json();
@@ -275,7 +268,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: firstIssue?.message ?? "Horse identifier is required.",
+          error: firstIssue?.message ?? "Identifiant du cheval requis.",
         },
         { status: 400 },
       );
@@ -290,10 +283,11 @@ export async function DELETE(request: NextRequest) {
       data: horse,
     });
   } catch (error) {
+    console.error("Erreur lors de la suppression d'un cheval", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );

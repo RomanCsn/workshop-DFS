@@ -13,13 +13,13 @@ export default async function CreateLessonsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">Add a lessons</h1>
+            <h1 className="text-2xl font-semibold">Ajouter une lecon</h1>
             <p className="text-sm text-muted-foreground">
-              text 
+              Planifiez une nouvelle lecon pour vos cavaliers.
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href="/lessons">Back to Lessons</Link>
+            <Link href="/lessons">Retour aux lecons</Link>
           </Button>
         </div>
         <LessonsForm />

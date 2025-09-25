@@ -41,7 +41,7 @@ export function LoginForm({
         });
 
         if (response.error) {
-          setError(response.error.message ?? "Invalid email or password.");
+          setError(response.error.message ?? "Email ou mot de passe invalide.");
           return;
         }
 
@@ -50,7 +50,7 @@ export function LoginForm({
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to sign in. Please try again.",
+            : "Connexion impossible. Merci de reessayer.",
         );
       } finally {
         setIsSubmitting(false);
@@ -64,9 +64,9 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>Connectez-vous a votre compte</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Saisissez votre email ci-dessous pour acceder a votre compte
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,12 +86,12 @@ export function LoginForm({
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Mot de passe</Label>
                   <a
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Mot de passe oublie ?
                   </a>
                 </div>
                 <Input
@@ -114,14 +114,14 @@ export function LoginForm({
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Signing in..." : "Login"}
+          {isSubmitting ? "Connexion..." : "Connexion"}
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
+              Pas encore de compte ?{" "}
               <a href="/signup" className="underline underline-offset-4">
-                Sign up
+                Inscription
               </a>
             </div>
           </form>

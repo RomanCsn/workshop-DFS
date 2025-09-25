@@ -23,33 +23,33 @@ const parseQueryNumber = (defaultValue: number) =>
 
 const QueryParamsSchema = z.object({
   take: parseQueryNumber(100).refine((n) => n >= 1 && n <= 1000, {
-    message: "take must be between 1 and 1000",
+    message: "take doit etre compris entre 1 et 1000",
   }),
   skip: parseQueryNumber(0).refine((n) => n >= 0, {
-    message: "skip must be >= 0",
+    message: "skip doit etre >= 0",
   }),
 });
 
 // Body schemas
 const CreateServiceSchema = z.object({
   serviceType: z.enum(["CARE", "LESSON"]).default("LESSON"),
-  billingId: z.string().uuid("billingId must be a valid UUID").optional(),
-  userId: z.string().uuid("userId must be a valid UUID"),
-  serviceId: z.string().uuid("serviceId must be a valid UUID"),
-  amount: z.number().min(0, "Amount must be positive").default(0),
+  billingId: z.string().uuid("billingId doit etre un UUID valide").optional(),
+  userId: z.string().uuid("userId doit etre un UUID valide"),
+  serviceId: z.string().uuid("serviceId doit etre un UUID valide"),
+  amount: z.number().min(0, "Le montant doit etre positif").default(0),
 }); 
 
 const UpdateServiceSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
   serviceType: z.enum(["CARE", "LESSON"]).optional(),
-  billingId: z.string().uuid("billingId must be a valid UUID").optional(),
-  userId: z.string().uuid("userId must be a valid UUID").optional(),
-  serviceId: z.string().uuid("serviceId must be a valid UUID").optional(),
-  amount: z.number().min(0, "Amount must be positive").optional(),
+  billingId: z.string().uuid("billingId doit etre un UUID valide").optional(),
+  userId: z.string().uuid("userId doit etre un UUID valide").optional(),
+  serviceId: z.string().uuid("serviceId doit etre un UUID valide").optional(),
+  amount: z.number().min(0, "Le montant doit etre positif").optional(),
 });
 
 const DeleteServiceSchema = z.object({
-  id: z.string().uuid("id must be a valid UUID"),
+  id: z.string().uuid("id doit etre un UUID valide"),
 });
 
 // GET /api/services - Get all performed services
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid query parameters",
+          error: "Parametres de requete invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -156,7 +156,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid data",
+          error: "Donnees invalides",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -175,7 +175,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
@@ -194,7 +194,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid or missing ID",
+          error: "Identifiant invalide ou manquant",
           details: validationResult.error.format(),
         },
         { status: 400 },
@@ -207,14 +207,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: service,
-      message: "Service deleted successfully",
+      message: "Service supprime avec succes",
     });
   } catch (error) {
     console.error("DELETE /api/services error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Erreur interne du serveur",
       },
       { status: 500 },
     );
