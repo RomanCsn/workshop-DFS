@@ -1,8 +1,11 @@
 import { Home, Dog, Settings, CreditCard } from "lucide-react";
+import { Home, Dog, Settings, Receipt, Paperclip } from "lucide-react";
+
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { User } from "@/generated/prisma";
+import { getCurrentUser } from "@/lib/session";
 
 type DashboardProps = {
   children: React.ReactNode;
@@ -12,18 +15,26 @@ type DashboardProps = {
 const ownerLinks = [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
   { title: "Horses", url: "/dashboard/horses", icon: Dog },
+  { title: "Billing", url: "/dashboard/billing", icon: Receipt},
+  { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
   { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const customerLinks = [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
+  { title: "Horses", url: "/dashboard/horses", icon: Dog },
+  { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
+  { title: "Billing", url: "/dashboard/billing", icon: Receipt},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
   { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const adminLinks =  [
   { title: "Overview", url: "/dashboard/admin", icon: Home },
+  { title: "Horses", url: "/dashboard/horses", icon: Dog },
+  { title: "Lessons", url: "/dashboard/lessons", icon: Paperclip},
+  { title: "Billing", url: "/dashboard/billing", icon: Receipt},
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
   { title: "Billing", url: "/billing", icon: CreditCard },
 ];
