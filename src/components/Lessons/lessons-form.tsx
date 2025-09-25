@@ -272,7 +272,7 @@ export function LessonsForm({ onSubmit }: LessonsFormProps) {
       onSubmit?.(values);
       setValues(emptyValues);
       setSuccessMessage("Lecon creee avec succes.");
-      router.push("/lessons");
+      router.push("/dashboard/lessons");
       router.refresh();
     } catch (error) {
       const message =

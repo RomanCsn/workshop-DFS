@@ -56,6 +56,7 @@ async function seedUsers() {
       role: Role.MONITOR,
     },
   });
+  users.push(monitor);
 
   const customer = await prisma.user.create({
     data: {
@@ -66,6 +67,7 @@ async function seedUsers() {
       role: Role.CUSTOMER,
     },
   });
+  users.push(customer);
 
   const admin = await prisma.user.create({
     data: {
@@ -78,8 +80,8 @@ async function seedUsers() {
   });
   users.push(admin);
 
-  // Create 50 monitors
-  for (let i = 0; i < 50; i++) {
+  // Create 49 additional monitors
+  for (let i = 0; i < 49; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const monitor = await prisma.user.create({
@@ -94,8 +96,8 @@ async function seedUsers() {
     users.push(monitor);
   }
 
-  // Create 200 customers
-  for (let i = 0; i < 200; i++) {
+  // Create 199 additional customers
+  for (let i = 0; i < 199; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const customer = await prisma.user.create({
@@ -128,12 +130,12 @@ async function seedHorses(owners) {
   ];
 
   const horses = [];
-  
+
   // Create 150 horses, distributed among owners
   for (let i = 0; i < 150; i++) {
     const randomOwner = owners.find(u => u.role === Role.OWNER) || owners[0];
     const horseName = horseNames[Math.floor(Math.random() * horseNames.length)];
-    
+
     const horse = await prisma.horse.create({
       data: {
         name: `${horseName}_${i + 1}`,
@@ -149,7 +151,7 @@ async function seedHorses(owners) {
 async function seedLessons(users, horses) {
   const customers = users.filter(u => u.role === Role.CUSTOMER);
   const monitors = users.filter(u => u.role === Role.MONITOR);
-  
+
   const lessonDescriptions = [
     "Introductory riding lesson",
     "Basic equitation techniques",
@@ -178,7 +180,7 @@ async function seedLessons(users, horses) {
     const randomHorse = horses[Math.floor(Math.random() * horses.length)];
     const randomDesc = lessonDescriptions[Math.floor(Math.random() * lessonDescriptions.length)];
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    
+
     // Random date between 3 months ago and 2 months in the future
     const minDate = new Date();
     minDate.setMonth(minDate.getMonth() - 3);
@@ -207,7 +209,7 @@ async function seedBilling(users, lessons, horses) {
   const monitors = users.filter(u => u.role === Role.MONITOR);
   const finishedLessons = lessons.filter(l => l.status === Status.FINISHED);
   const billingStatuses = ["PAYED", "UNPAYED"];
-  
+
   const billings = [];
 
   // Create billing for finished lessons
@@ -215,11 +217,11 @@ async function seedBilling(users, lessons, horses) {
     const lesson = finishedLessons[i];
     const customer = customers.find(c => c.id === lesson.customerId);
     const randomStatus = billingStatuses[Math.floor(Math.random() * billingStatuses.length)];
-    
+
     // Random date after the lesson date
     const billingDate = new Date(lesson.date);
     billingDate.setDate(billingDate.getDate() + Math.floor(Math.random() * 7) + 1);
-    
+
     const billing = await prisma.billing.create({
       data: {
         date: billingDate,
@@ -247,15 +249,15 @@ async function seedBilling(users, lessons, horses) {
   for (let i = 0; i < 100; i++) {
     const randomCustomer = customers[Math.floor(Math.random() * customers.length)];
     const randomStatus = billingStatuses[Math.floor(Math.random() * billingStatuses.length)];
-    
+
     // Random date in the last 3 months
     const serviceDate = new Date();
     serviceDate.setMonth(serviceDate.getMonth() - Math.floor(Math.random() * 3));
-    
+
     // Create a lesson first (since serviceId is required)
     const randomMonitor = monitors[Math.floor(Math.random() * monitors.length)];
     const randomHorse = horses[Math.floor(Math.random() * horses.length)];
-    
+
     const careLesson = await prisma.lesson.create({
       data: {
         date: serviceDate,
@@ -266,7 +268,7 @@ async function seedBilling(users, lessons, horses) {
         horseId: randomHorse.id,
       },
     });
-    
+
     const billing = await prisma.billing.create({
       data: {
         date: serviceDate,
@@ -308,7 +310,7 @@ async function seedSessions(users) {
     const randomUser = users[Math.floor(Math.random() * users.length)];
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
     const randomIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-    
+
     await prisma.session.create({
       data: {
         id: `session-${randomUser.role.toLowerCase()}-${i}`,
@@ -322,20 +324,25 @@ async function seedSessions(users) {
   }
 }
 
-async function seedAccounts(users) {
-  // Create accounts for first 30 users
-  for (let i = 0; i < Math.min(30, users.length); i++) {
-    const user = users[i];
-    await prisma.account.create({
+async function seedAccounts() {
+  const users = await prisma.user.findMany();
+  const accounts = [];
+
+  for (const user of users) {
+    const account = await prisma.account.create({
       data: {
-        id: `account-${user.role.toLowerCase()}-${i}`,
-        accountId: `${user.firstName.toLowerCase()}-${user.lastName.toLowerCase()}-${i}`,
+        id: `account-${user.id}`,
+        accountId: user.email,
         providerId: "credentials",
         userId: user.id,
-        password: `hashed-password-${Math.random().toString(36).substring(7)}`,
+        password: "password",
       },
     });
+
+    accounts.push(account);
   }
+
+  return accounts;
 }
 
 async function seedVerifications(users) {
@@ -343,7 +350,7 @@ async function seedVerifications(users) {
   for (let i = 0; i < Math.min(20, users.length); i++) {
     const user = users[i];
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     await prisma.verification.create({
       data: {
         id: `verification-${user.role.toLowerCase()}-${i}`,
@@ -380,8 +387,8 @@ async function main() {
   console.info("✅ Created 50 sessions");
 
   console.info("👤 Creating accounts...");
-  await seedAccounts(users);
-  console.info("✅ Created 30 accounts");
+  const accounts = await seedAccounts();
+  console.info(`✅ Created ${accounts.length} accounts`);
 
   console.info("✉️  Creating verifications...");
   await seedVerifications(users);
@@ -394,118 +401,8 @@ async function main() {
   - ${lessons.length} lessons
   - ${billings.length} billing records
   - 50 active sessions
-  - 30 user accounts
+  - ${accounts.length} user accounts
   - 20 email verifications`);
-
-  return { owner, monitor, customer, admin };
-}
-
-async function seedHorses(ownerId) {
-  const horse = await prisma.horse.create({
-    data: {
-      name: "Shadowfax",
-      ownerId,
-    },
-  });
-
-  return horse;
-}
-
-async function seedLessons(customerId, monitorId, horseId) {
-  const introLesson = await prisma.lesson.create({
-    data: {
-      date: new Date("2024-05-01T09:00:00Z"),
-      desc: "Introductory riding lesson",
-      status: Status.FINISHED,
-      customerId,
-      monitorId,
-      horseId,
-    },
-  });
-
-  const upcomingLesson = await prisma.lesson.create({
-    data: {
-      date: new Date("2024-05-08T09:00:00Z"),
-      desc: "Follow-up lesson for posture",
-      status: Status.PENDING,
-      customerId,
-      monitorId,
-      horseId,
-    },
-  });
-
-  return { introLesson, upcomingLesson };
-}
-
-async function seedBilling(customerId, lessonId) {
-  const billing = await prisma.billing.create({
-    data: {
-      date: new Date("2024-05-02T10:00:00Z"),
-    },
-  });
-
-  await prisma.performedService.create({
-    data: {
-      billingId: billing.id,
-      userId: customerId,
-      serviceId: lessonId,
-      amount: 45,
-      serviceType: Service_type.LESSON,
-    },
-  });
-
-  return billing;
-}
-
-async function seedSessions(userId) {
-  await prisma.session.create({
-    data: {
-      id: "session-customer-1",
-      token: "token-customer-1",
-      userId,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      ipAddress: "127.0.0.1",
-      userAgent: "seed-script",
-    },
-  });
-}
-
-async function seedAccount(userId) {
-  await prisma.account.create({
-    data: {
-      id: "account-owner-credentials",
-      accountId: "olivia-owner",
-      providerId: "credentials",
-      userId,
-      password: "hashed-password",
-    },
-  });
-}
-
-async function seedVerification(identifier) {
-  await prisma.verification.create({
-    data: {
-      id: "verification-owner-email",
-      identifier,
-      value: "123456",
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-    },
-  });
-}
-
-async function main() {
-  await clearDatabase();
-
-  const { owner, monitor, customer } = await seedUsers();
-  const horse = await seedHorses(owner.id);
-  const { introLesson } = await seedLessons(customer.id, monitor.id, horse.id);
-
-  await seedBilling(customer.id, introLesson.id);
-  await seedSessions(customer.id);
-  await seedAccount(owner.id);
-  await seedVerification(owner.email);
-
-  console.info("Database seeded successfully.");
 }
 
 main()

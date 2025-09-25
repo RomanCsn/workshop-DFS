@@ -19,7 +19,7 @@ export default async function CreateLessonsPage() {
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href="/lessons">Retour aux lecons</Link>
+            <Link href="/dashboard/lessons">Retour aux lecons</Link>
           </Button>
         </div>
         <LessonsForm />
